@@ -1,4 +1,4 @@
-import Footer from '@/components/footer';
+import Footer from '@/components/layout/footer';
 import { GithubLogo } from '@/components/icons/social';
 import { buttonVariants } from '@/ui/button';
 import ExternalLink from '@/ui/external-link';
@@ -15,11 +15,11 @@ export default async function Home() {
 			<section
 				id='hero'
 				className='flex flex-col items-center px-6 pt-16 text-center md:pt-24 lg:pt-32'>
-				<TypographyH1 className='max-w-[75ch] duration-500 animate-in fade-in-5 slide-in-from-bottom-2'>
+				<TypographyH1 className='font-mono text-white max-w-[75ch] duration-500 animate-in fade-in-5 slide-in-from-bottom-2'>
 					Enhance Your Link Management
 				</TypographyH1>
-				<TypographyP className='max-w-[75ch] text-sm duration-700 animate-in fade-in-5 slide-in-from-top-2 md:text-base [&:not(:first-child)]:mt-6'>
-					Slug is an open-source platform that allows you to create,
+				<TypographyP className='max-w-[75ch] text-white text-sm duration-700 animate-in fade-in-5 slide-in-from-top-2 md:text-base [&:not(:first-child)]:mt-6'>
+					<b>Rask</b> is an open-source platform that allows you to create,
 					manage, and share short links with ease. It's fast, secure, and
 					easy to use.
 				</TypographyP>
@@ -38,7 +38,7 @@ export default async function Home() {
 						<span>Create a Link</span>
 					</Link>
 					<ExternalLink
-						href='https://github.com/pheralb/slug'
+						href='https://github.com/rguixaro/rask-app'
 						className={buttonVariants({
 							variant: 'expandIcon',
 							size: 'lg',
@@ -46,8 +46,7 @@ export default async function Home() {
 						})}>
 						<GithubLogo
 							height={18}
-							className='duration-300
-                 group-hover:-rotate-[10deg]'
+							className='duration-300 group-hover:-rotate-[10deg]'
 						/>
 						<span>Star on GitHub</span>
 					</ExternalLink>
