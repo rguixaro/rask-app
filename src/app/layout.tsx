@@ -5,6 +5,7 @@ import '@/styles/globals.css';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import Header from '@/components/layout/header';
 import { cn } from '@/utils';
+import Footer from '@/components/layout/footer';
 
 const interVariable = localFont({
 	variable: '--font-sans',
