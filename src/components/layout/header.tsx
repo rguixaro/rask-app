@@ -6,14 +6,14 @@ import ExternalLink from '@/ui/external-link';
 import { buttonVariants } from '@/ui/button';
 import Logo from '@/components/icons/logo';
 import { GithubLogo } from '@/components/icons/social';
-import { ModeToggle } from './switch-theme';
+import { ModeToggle } from '../switch-theme';
 
 const Header = () => {
 	return (
 		<nav
 			className={cn(
-				'flex w-full',
-				'pb-3 pt-4 lg:px-4',
+				'flex w-full justify-center',
+				'py-5 lg:px-4',
 				'sticky top-0 z-50',
 				'bg-white dark:bg-neutral-900'
 			)}>
@@ -28,8 +28,8 @@ const Header = () => {
 							href='/'
 							className='flex items-center space-x-3 transition-opacity hover:opacity-80 rtl:space-x-reverse'>
 							<Logo width={30} />
-							<span className='self-center whitespace-nowrap text-lg font-medium tracking-tight dark:text-white'>
-								rask
+							<span className='font-mono self-center whitespace-nowrap text-lg font-medium tracking-tight dark:text-white'>
+								Rask
 							</span>
 							<Badge className='hidden cursor-pointer md:block'>
 								beta
@@ -37,9 +37,9 @@ const Header = () => {
 						</Link>
 					</div>
 				</div>
-				<div className='flex items-center space-x-1'>
+				<div className='flex items-center space-x-5'>
 					<ExternalLink
-						href='https://github.com/pheralb/slug'
+						href='https://github.com/rguixaro/rask-app'
 						className={buttonVariants({
 							variant: 'ghost',
 							size: 'icon',
