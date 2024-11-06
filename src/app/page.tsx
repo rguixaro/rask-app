@@ -2,7 +2,12 @@
 
 import Footer from '@/components/layout/footer';
 import { Button } from '@/ui/button';
-import { TypographyH3, TypographyH4, TypographyP } from '@/ui/typography';
+import {
+	TypographyH2,
+	TypographyH3,
+	TypographyH4,
+	TypographyP,
+} from '@/ui/typography';
 import { LoaderIcon, RocketIcon, ShuffleIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { Input, Textarea } from '@/ui/input';
@@ -109,21 +114,19 @@ export default function Home(props: CreateLinkProps) {
 
 	/* h-[calc(100vh-4rem)] */
 	return (
-		<main className='relative 100vh'>
+		<main className='h-[calc(100vh-5rem)]'>
 			<div className='absolute inset-0 -z-10 h-full w-full bg-green-forest bg-[linear-gradient(to_right,#0000000a_1px,transparent_1px),linear-gradient(to_bottom,#0000000a_1px,transparent_1px)] bg-[size:14px_24px] dark:bg-green-forest'></div>
-			<section
-				id='hero'
-				className='flex flex-col items-center px-6 text-center'>
-				<TypographyH3 className='font-mono text-white max-w-[75ch] duration-500 animate-in fade-in-5 slide-in-from-bottom-2'>
+			<section className='flex flex-col items-center px-6 text-center'>
+				<TypographyH2 className='font-mono text-white max-w-[75ch] duration-500 animate-in fade-in-5 slide-in-from-bottom-2'>
 					Enhance Your Link Management
-				</TypographyH3>
-				<TypographyP className='max-w-[75ch] text-white text-sm duration-700 animate-in fade-in-5 slide-in-from-top-2 md:text-base'>
+				</TypographyH2>
+				<TypographyP className='max-w-[75ch] text-white text-sm duration-700 animate-in fade-in-5 slide-in-from-top-2 md:text-base lg:text-lg xl:text-xl'>
 					{' '}
 					<b>Rask</b> is an open-source platform that allows you to create,
 					manage, and share short links with ease. It's fast, secure, and
 					easy to use.
 				</TypographyP>
-				<div className='mt-8 items-center justify-center gap-x-3 space-y-3 duration-700 animate-in fade-in-30 sm:flex sm:space-y-0 '>
+				<div className='min-h-[400px] mt-8 items-center justify-center gap-x-3 space-y-3 duration-700 animate-in fade-in-30 sm:flex sm:space-y-0 '>
 					<div className='p-5 rounded-lg bg-white dark:bg-neutral-900'>
 						<TypographyH4 className='font-mono mt-0 max-w-[75ch] duration-500 animate-in fade-in-5 slide-in-from-bottom-2 text-neutral-900 dark:text-white'>
 							Shorten a long link
@@ -224,7 +227,7 @@ export default function Home(props: CreateLinkProps) {
 					</div>
 				</div>
 			</section>
-			<Footer className='bottom-0 mt-4 py-4' />
+			<Footer className='bottom-0 lg:left-1/4 lg:right-1/4 fixed mt-4 py-4' />
 		</main>
 	);
 }
