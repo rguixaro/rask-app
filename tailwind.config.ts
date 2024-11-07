@@ -17,7 +17,20 @@ const config = {
 			screens: { '2xl': '1400px' },
 		},
 		extend: {
-			colors: { 'green-forest': '#205550' },
+			colors: {
+				forest: {
+					50: '#B4C8B3',
+					100: '#95B19A',
+					200: '#789B84',
+					300: '#5A8470',
+					400: '#3D6C5F',
+					500: '#205550',
+					600: '#1B464B',
+					700: '#173341',
+					800: '#122337',
+					900: '#0E162C',
+				},
+			},
 			fontFamily: {
 				sans: ['var(--font-atkinson-regular)', ...fontFamily.sans],
 				mono: ['var(--font-atkinson-bold)', ...fontFamily.mono],
