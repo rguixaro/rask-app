@@ -42,7 +42,6 @@ export default function Home(props: CreateLinkProps) {
 		defaultValues: {
 			url: '',
 			slug: props.slug ?? '',
-			description: '',
 		},
 	});
 
@@ -115,119 +114,110 @@ export default function Home(props: CreateLinkProps) {
 	/* h-[calc(100vh-4rem)] */
 	return (
 		<main className='h-[calc(100vh-5rem)]'>
-			<div className='absolute inset-0 -z-10 h-full w-full bg-green-forest bg-[linear-gradient(to_right,#0000000a_1px,transparent_1px),linear-gradient(to_bottom,#0000000a_1px,transparent_1px)] bg-[size:14px_24px] dark:bg-green-forest'></div>
+			<div className='absolute inset-0 -z-10 h-full w-full bg-forest-500 bg-[linear-gradient(to_right,#0000000a_1px,transparent_1px),linear-gradient(to_bottom,#0000000a_1px,transparent_1px)] bg-[size:14px_24px] dark:bg-forest-500'></div>
 			<section className='flex flex-col items-center px-6 text-center'>
 				<TypographyH2 className='font-mono text-white max-w-[75ch] duration-500 animate-in fade-in-5 slide-in-from-bottom-2'>
 					Enhance Your Link Management
 				</TypographyH2>
 				<TypographyP className='max-w-[75ch] text-white text-sm duration-700 animate-in fade-in-5 slide-in-from-top-2 md:text-base lg:text-lg xl:text-xl'>
-					{' '}
 					<b>Rask</b> is an open-source platform that allows you to create,
 					manage, and share short links with ease. It's fast, secure, and
 					easy to use.
 				</TypographyP>
-				<div className='min-h-[400px] mt-8 items-center justify-center gap-x-3 space-y-3 duration-700 animate-in fade-in-30 sm:flex sm:space-y-0 '>
-					<div className='p-5 rounded-lg bg-white dark:bg-neutral-900'>
-						<TypographyH4 className='font-mono mt-0 max-w-[75ch] duration-500 animate-in fade-in-5 slide-in-from-bottom-2 text-neutral-900 dark:text-white'>
+				<div className='bg-white/60 backdrop-blur-md dark:bg-neutral-900/60 rounded-2xl p-2 w-4/5 md:w-1/2 lg:w-1/3 mt-4 sm:mt-8 items-center justify-center gap-x-3 space-y-3 duration-700 animate-in fade-in-30 sm:flex sm:space-y-0 '>
+					<div className='p-5 rounded-xl bg-white flex-grow dark:bg-neutral-900 flex flex-col items-start justify-start'>
+						<TypographyH4 className='font-mono max-w-[75ch] duration-500 animate-in fade-in-5 slide-in-from-bottom-2 text-neutral-900 dark:text-white'>
 							Shorten a long link
 						</TypographyH4>
-						<Form {...form}>
-							<form
-								onSubmit={form.handleSubmit(onSubmit)}
-								className='space-y-6'>
-								<div className='space-y-5'>
-									<FormField
-										control={form.control}
-										name='url'
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>
-													Destination URL:
-												</FormLabel>
-												<FormControl>
-													<Input
-														{...field}
-														autoComplete='off'
-														placeholder='https://'
-														disabled={loading}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-									<FormField
-										control={form.control}
-										name='slug'
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Short link:</FormLabel>
-												<FormControl>
-													<div className='relative flex items-center'>
+						<TypographyP className='max-w-[75ch] mb-5 duration-500 animate-in fade-in-5 slide-in-from-bottom-2 text-neutral-900 dark:text-white text-left'>
+							You can create up to 10 short links/month
+						</TypographyP>
+						<div className='w-full'>
+							<Form {...form}>
+								<form
+									onSubmit={form.handleSubmit(onSubmit)}
+									className='space-y-6 w-full'>
+									<div className='space-y-5'>
+										<FormField
+											control={form.control}
+											name='url'
+											render={({ field }) => (
+												<FormItem className='text-left'>
+													<FormLabel className='font-mono text-md lg:text-lg'>
+														Paste your long link here
+													</FormLabel>
+													<FormControl>
 														<Input
 															{...field}
-															placeholder='mylink'
+															autoComplete='off'
+															placeholder='https://example.com/my-long-url'
 															disabled={loading}
 														/>
-														<Button
-															onClick={
-																handleGenerateRandomSlug
-															}
-															variant='outline'
-															className='absolute right-0 rounded-none rounded-br-md rounded-tr-md'>
-															<ShuffleIcon size={14} />
-															<span>Randomize</span>
-														</Button>
-													</div>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+										<FormField
+											control={form.control}
+											name='slug'
+											render={({ field }) => (
+												<FormItem className='text-left'>
+													<FormLabel className='font-mono text-md lg:text-lg'>
+														Customize your link
+													</FormLabel>
+													<FormControl>
+														<div className='relative flex items-center'>
+															<Input
+																{...field}
+																placeholder='mylink'
+																disabled={loading}
+															/>
+															<Button
+																onClick={
+																	handleGenerateRandomSlug
+																}
+																variant='outline'
+																className='absolute right-0 rounded-none rounded-br-md rounded-tr-md '>
+																<ShuffleIcon
+																	size={14}
+																/>
+																<span>
+																	Randomize
+																</span>
+															</Button>
+														</div>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+										{isError && (
+											<Alert variant='error'>{message}</Alert>
 										)}
-									/>
-									<FormField
-										control={form.control}
-										name='description'
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>
-													Description (optional):
-												</FormLabel>
-												<FormControl>
-													<Textarea
-														{...field}
-														placeholder='Enter a description'
-														disabled={loading}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-									{isError && (
-										<Alert variant='error'>{message}</Alert>
-									)}
-								</div>
-								<Button type='submit' disabled={loading}>
-									<div className='flex space-x-3 items-center mr-[16px]'>
-										{loading ? (
-											<LoaderIcon
-												size={16}
-												className='animate-spin'
-											/>
-										) : (
-											<RocketIcon size={16} />
-										)}
-										<span>
-											{loading ? 'Creating...' : 'Create'}
-										</span>
 									</div>
-								</Button>
-							</form>
-						</Form>
+									<Button type='submit' disabled={loading}>
+										<div className='flex space-x-3 items-center mr-[16px] px-5'>
+											{loading ? (
+												<LoaderIcon
+													size={16}
+													className='animate-spin'
+												/>
+											) : (
+												<RocketIcon size={16} />
+											)}
+											<span>
+												{loading ? 'Creating...' : 'Create'}
+											</span>
+										</div>
+									</Button>
+								</form>
+							</Form>
+						</div>
 					</div>
 				</div>
 			</section>
-			<Footer className='bottom-0 lg:left-1/4 lg:right-1/4 fixed mt-4 py-4' />
+			<Footer className='bottom-0 sm:left-1/4 sm:right-1/4 fixed mt-4 pt-4 pb-3' />
 		</main>
 	);
 }
