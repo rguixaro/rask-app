@@ -26,6 +26,7 @@ import { CreateLinkSchema } from '@/types';
 import { ReactNode, useState } from 'react';
 import JSConfetti from 'js-confetti';
 import Alert from '@/ui/alert';
+import { cn } from '@/utils';
 
 interface CreateLinkProps {
 	children: ReactNode;
@@ -111,14 +112,16 @@ export default function Home(props: CreateLinkProps) {
 		form.setValue('slug', randomSlug);
 	};
 
-	/* h-[calc(100vh-4rem)] */
 	return (
-		<main className='h-[calc(100vh-5rem)]'>
-			<div className='absolute inset-0 -z-10 h-full w-full bg-forest-500 bg-[linear-gradient(to_right,#0000000a_1px,transparent_1px),linear-gradient(to_bottom,#0000000a_1px,transparent_1px)] bg-[size:14px_24px] dark:bg-forest-500'></div>
+		<main
+			className={cn(
+				'bg-forest-500 bg-[linear-gradient(to_right,#0000000a_1px,transparent_1px),linear-gradient(to_bottom,#0000000a_1px,transparent_1px)] bg-[size:14px_24px] dark:bg-forest-500',
+				'h-[calc(100vh-5rem)] min-h-[730px] flex flex-col justify-between items-center'
+			)}>
 			<section className='flex flex-col items-center px-6 text-center'>
-				<TypographyH2 className='font-mono text-white max-w-[75ch] duration-500 animate-in fade-in-5 slide-in-from-bottom-2'>
+				<TypographyH3 className='flex  font-mono text-white max-w-[75ch] duration-500 animate-in fade-in-5 slide-in-from-bottom-2'>
 					Enhance Your Link Management
-				</TypographyH2>
+				</TypographyH3>
 				<TypographyP className='max-w-[75ch] text-white text-sm duration-700 animate-in fade-in-5 slide-in-from-top-2 md:text-base lg:text-lg xl:text-xl'>
 					<b>Rask</b> is an open-source platform that allows you to create,
 					manage, and share short links with ease. It's fast, secure, and
@@ -217,7 +220,7 @@ export default function Home(props: CreateLinkProps) {
 					</div>
 				</div>
 			</section>
-			<Footer className='bottom-0 sm:left-1/4 sm:right-1/4 fixed mt-4 pt-4 pb-3' />
+			<Footer className='sm:w-1/2 mt-4 pt-4 pb-3' />
 		</main>
 	);
 }
