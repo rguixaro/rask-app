@@ -27,7 +27,7 @@ export const TypographyH2 = forwardRef<
 		<h2
 			ref={ref}
 			className={cn(
-				'mt-6 text-4xl font-bold tracking-tight lg:text-5xl',
+				'mt-6 text-4xl font-bold tracking-tight lg:text-5xl xl:text-6xl',
 				className
 			)}
 			{...props}

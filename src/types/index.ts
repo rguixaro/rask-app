@@ -4,7 +4,6 @@ export const LinkSchema = z.object({
 	id: z.number(),
 	url: z.string(),
 	slug: z.string(),
-	description: z.string().optional(),
 	tagId: z.number().optional(),
 });
 
@@ -35,10 +34,6 @@ export const CreateLinkSchema = z.object({
 		.regex(/^(?!.*&c$)/, {
 			message: "Custom short link can't end with &c.",
 		}),
-
-	description: z
-		.string()
-		.max(100, { message: 'The description must be less than 100 characters.' }),
 });
 
 export const EditLinkSchema = z.object({
@@ -65,9 +60,6 @@ export const EditLinkSchema = z.object({
 		.regex(/^(?!.*&c$)/, {
 			message: "Custom short link can't end with &c.",
 		}),
-	description: z
-		.string()
-		.max(100, { message: 'The description must be less than 100 characters.' }),
 });
 
 export const DeleteLinkSchema = z.object({
