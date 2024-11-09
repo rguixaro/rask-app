@@ -1,14 +1,28 @@
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
 import { cn } from '@/utils';
 
 import { Badge } from '@/ui/badge';
 import ExternalLink from '@/ui/external-link';
-import { buttonVariants } from '@/ui/button';
+import { Button, buttonVariants } from '@/ui/button';
 import Logo from '@/components/icons/logo';
 import { GithubLogo } from '@/components/icons/social';
 import { ModeToggle } from '../switch-theme';
 
+import {
+	Dialog,
+	DialogContent,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '@/ui/dialog';
+import LinksList from '../links/list';
+
 const Header = () => {
+	const [open, setOpen] = useState<boolean>(false);
 	return (
 		<nav
 			className={cn(
@@ -38,6 +52,16 @@ const Header = () => {
 					</div>
 				</div>
 				<div className='flex items-center space-x-5'>
+					<Button
+						variant='ghost'
+						size='icon'
+						className='w-auto px-3'
+						onClick={() => setOpen(true)}>
+						<span className='font-mono text-md tracking-tight text-neutral-800 dark:text-white'>
+							URLs
+						</span>
+					</Button>
+					<ModeToggle />
 					<ExternalLink
 						href='https://github.com/rguixaro/rask-app'
 						className={buttonVariants({
@@ -46,9 +70,23 @@ const Header = () => {
 						})}>
 						<GithubLogo width={20} name='GitHub Repository' />
 					</ExternalLink>
-					<ModeToggle />
 				</div>
 			</div>
+			<Dialog open={open} onOpenChange={setOpen}>
+				<DialogContent>
+					<DialogHeader className='mb-2'>
+						<DialogTitle>
+							<p className='text-lg font-mono leading-none tracking-tight '>
+								Your recent URLs
+							</p>
+							<p className='mt-3 text-gray-900 dark:text-white font-thin'>
+								Here you can see all the links you have created
+							</p>
+						</DialogTitle>
+					</DialogHeader>
+					<LinksList />
+				</DialogContent>
+			</Dialog>
 		</nav>
 	);
 };
