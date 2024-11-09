@@ -4,7 +4,8 @@ export const LinkSchema = z.object({
 	id: z.number(),
 	url: z.string(),
 	slug: z.string(),
-	tagId: z.number().optional(),
+	visits: z.number().optional(),
+	created_at: z.string(),
 });
 
 export const CreateLinkSchema = z.object({
