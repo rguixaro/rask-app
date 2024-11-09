@@ -2,15 +2,10 @@
 
 import Footer from '@/components/layout/footer';
 import { Button } from '@/ui/button';
-import {
-	TypographyH2,
-	TypographyH3,
-	TypographyH4,
-	TypographyP,
-} from '@/ui/typography';
+import { TypographyH3, TypographyH4, TypographyP } from '@/ui/typography';
 import { LoaderIcon, RocketIcon, ShuffleIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { Input, Textarea } from '@/ui/input';
+import { Input } from '@/ui/input';
 import {
 	Form,
 	FormControl,
