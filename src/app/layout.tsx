@@ -3,7 +3,7 @@ import localFont from 'next/font/local';
 import '@/styles/globals.css';
 
 import { ThemeProvider } from '@/components/providers/theme-provider';
-import Header from '@/components/header';
+import Header from '@/components/layout/header';
 import { cn } from '@/utils';
 
 const interVariable = localFont({
@@ -22,6 +22,22 @@ const geistMonoVariable = localFont({
 	preload: true,
 });
 
+const atkinsonBold = localFont({
+	variable: '--font-atkinson-bold',
+	src: '../fonts/atkinson-bold.woff',
+	weight: '400',
+	display: 'swap',
+	preload: true,
+});
+
+const atkinsonRegular = localFont({
+	variable: '--font-atkinson-regular',
+	src: '../fonts/atkinson-regular.woff',
+	weight: '400',
+	display: 'swap',
+	preload: true,
+});
+
 export const metadata: Metadata = {
 	title: 'Rask',
 	description: 'An open-source URL shortener',
@@ -33,10 +49,10 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang='en'>
+		<html lang='en' suppressHydrationWarning>
 			<body
 				className={cn(
-					`font-sans ${interVariable.variable} ${geistMonoVariable.variable} antialiased`,
+					`font-sans ${interVariable.variable} ${geistMonoVariable.variable} ${atkinsonBold.variable} ${atkinsonRegular.variable}  antialiased`,
 					'bg-white dark:bg-neutral-900',
 					'selection:bg-neutral-200 dark:selection:bg-neutral-700'
 				)}>
