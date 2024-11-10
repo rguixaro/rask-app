@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { LoaderIcon } from 'lucide-react';
 
 import { LinkSchema } from '@/types';
+import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
+import { TypographyP } from '@/ui/typography';
+import { cn } from '@/utils';
 import LinkItem from './item';
 
 function getLinks(): Promise<LinkSchema[]> {
@@ -55,6 +58,8 @@ const LinksList = () => {
 	const [loading, setLoading] = useState(true);
 	const [links, setLinks] = useState<LinkSchema[]>([]);
 
+	const { copy } = useCopyToClipboard();
+
 	useEffect(() => {
 		getLinks().then((data) => {
 			setLoading(false);
@@ -63,12 +68,18 @@ const LinksList = () => {
 	}, []);
 
 	return (
-		<div className='flex flex-col items-center justify-start w-full h-full overflow-scroll'>
-			{loading ? (
-				<LoaderIcon size={16} className='animate-spin' />
-			) : (
-				links.map((item) => LinkItem({ link: item }))
+		<div
+			className={cn(
+				'flex flex-col items-start justify-start w-full h-full overflow-y-scroll',
+				'scrollbar-thin scrollbar-track-forest-500/30 scrollbar-thumb-forest-500/50'
+			)}>
+			{loading && (
+				<div className='self-center flex flex-col items-center '>
+					<LoaderIcon size={16} className='animate-spin text-forest-500' />
+					<TypographyP className='font-mono'>Loading...</TypographyP>
+				</div>
 			)}
+			{links.length && links.map((item) => LinkItem({ link: item, copy }))}
 		</div>
 	);
 };

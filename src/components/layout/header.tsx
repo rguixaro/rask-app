@@ -2,24 +2,17 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { cn } from '@/utils';
 
-import { Badge } from '@/ui/badge';
-import ExternalLink from '@/ui/external-link';
-import { Button, buttonVariants } from '@/ui/button';
 import Logo from '@/components/icons/logo';
 import { GithubLogo } from '@/components/icons/social';
-import { ModeToggle } from '../switch-theme';
-
-import {
-	Dialog,
-	DialogContent,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from '@/ui/dialog';
+import ExternalLink from '@/ui/external-link';
+import { Badge } from '@/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/dialog';
+import { Button, buttonVariants } from '@/ui/button';
+import { TypographyH4, TypographyP } from '@/ui/typography';
+import { cn } from '@/utils';
 import LinksList from '../links/list';
+import { ModeToggle } from '../switch-theme';
 
 const Header = () => {
 	const [open, setOpen] = useState<boolean>(false);
@@ -75,14 +68,13 @@ const Header = () => {
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogContent>
 					<DialogHeader className='mb-2'>
-						<DialogTitle>
-							<p className='text-lg font-mono leading-none tracking-tight '>
-								Your recent URLs
-							</p>
-							<p className='mt-3 text-gray-900 dark:text-white font-thin'>
-								Here you can see all the links you have created
-							</p>
-						</DialogTitle>
+						<DialogTitle />
+						<TypographyH4 className='font-mono'>
+							Your recent URLs
+						</TypographyH4>
+						<TypographyP className='text-gray-900 dark:text-white'>
+							Here you can see all the links you have created
+						</TypographyP>
 					</DialogHeader>
 					<LinksList />
 				</DialogContent>
