@@ -19,16 +19,13 @@ const config = {
 		extend: {
 			colors: {
 				forest: {
-					50: '#B4C8B3',
-					100: '#95B19A',
+					100: '#a6bbb9',
 					200: '#789B84',
 					300: '#5A8470',
 					400: '#3D6C5F',
 					500: '#205550',
 					600: '#1B464B',
-					700: '#173341',
-					800: '#122337',
-					900: '#0E162C',
+					700: '#1a2f2d',
 				},
 			},
 			fontFamily: {
@@ -60,7 +57,11 @@ const config = {
 			},
 		},
 	},
-	plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography')],
+	plugins: [
+		require('tailwindcss-animate'),
+		require('@tailwindcss/typography'),
+		require('tailwind-scrollbar'),
+	],
 } satisfies Config;
 
 export default config;
