@@ -124,10 +124,10 @@ export default function Home(props: CreateLinkProps) {
 				</TypographyP>
 				<div className='bg-white/60 backdrop-blur-md dark:bg-neutral-900/60 rounded-2xl p-2 w-4/5 md:w-1/2 lg:w-1/3 mt-4 sm:mt-8 items-center justify-center gap-x-3 space-y-3 duration-700 animate-in fade-in-30 sm:flex sm:space-y-0 '>
 					<div className='p-5 rounded-xl bg-white flex-grow dark:bg-neutral-900 flex flex-col items-start justify-start'>
-						<TypographyH4 className='font-mono max-w-[75ch] duration-500 animate-in fade-in-5 slide-in-from-bottom-2 text-neutral-900 dark:text-white'>
+						<TypographyH4 className='font-mono max-w-[75ch] duration-500 animate-in fade-in-5 slide-in-from-bottom-2 text-neutral-800 dark:text-white'>
 							Shorten a long link
 						</TypographyH4>
-						<TypographyP className='max-w-[75ch] mb-5 duration-500 animate-in fade-in-5 slide-in-from-bottom-2 text-neutral-900 dark:text-white text-left'>
+						<TypographyP className='max-w-[75ch] mb-5 duration-500 animate-in fade-in-5 slide-in-from-bottom-2 text-neutral-800 dark:text-white text-left'>
 							You can create up to 10 short links/month
 						</TypographyP>
 						<div className='w-full'>
@@ -141,7 +141,7 @@ export default function Home(props: CreateLinkProps) {
 											name='url'
 											render={({ field }) => (
 												<FormItem className='text-left'>
-													<FormLabel className='font-mono text-md lg:text-lg'>
+													<FormLabel className='font-mono text-md lg:text-lg text-neutral-800 dark:text-white'>
 														Paste your long link here
 													</FormLabel>
 													<FormControl>
@@ -161,7 +161,7 @@ export default function Home(props: CreateLinkProps) {
 											name='slug'
 											render={({ field }) => (
 												<FormItem className='text-left'>
-													<FormLabel className='font-mono text-md lg:text-lg'>
+													<FormLabel className='font-mono text-md lg:text-lg text-neutral-800 dark:text-white'>
 														Customize your link
 													</FormLabel>
 													<FormControl>

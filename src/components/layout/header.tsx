@@ -1,14 +1,21 @@
-import Link from 'next/link';
-import { cn } from '@/utils';
+'use client';
 
-import { Badge } from '@/ui/badge';
-import ExternalLink from '@/ui/external-link';
-import { buttonVariants } from '@/ui/button';
+import { useState } from 'react';
+import Link from 'next/link';
+
 import Logo from '@/components/icons/logo';
 import { GithubLogo } from '@/components/icons/social';
+import ExternalLink from '@/ui/external-link';
+import { Badge } from '@/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/dialog';
+import { Button, buttonVariants } from '@/ui/button';
+import { TypographyH3, TypographyH4, TypographyP } from '@/ui/typography';
+import { cn } from '@/utils';
+import LinksList from '../links/list';
 import { ModeToggle } from '../switch-theme';
 
 const Header = () => {
+	const [open, setOpen] = useState<boolean>(false);
 	return (
 		<nav
 			className={cn(
@@ -28,7 +35,7 @@ const Header = () => {
 							href='/'
 							className='flex items-center space-x-3 transition-opacity hover:opacity-80 rtl:space-x-reverse'>
 							<Logo width={30} />
-							<span className='font-mono self-center whitespace-nowrap text-lg font-medium tracking-tight dark:text-white'>
+							<span className='font-mono self-center whitespace-nowrap text-lg md:text-xl font-medium tracking-tight dark:text-white'>
 								Rask
 							</span>
 							<Badge className='hidden cursor-pointer md:block'>
@@ -38,6 +45,16 @@ const Header = () => {
 					</div>
 				</div>
 				<div className='flex items-center space-x-5'>
+					<Button
+						variant='ghost'
+						size='icon'
+						className='w-auto px-3'
+						onClick={() => setOpen(true)}>
+						<span className='font-mono md:text-lg tracking-tight text-neutral-800 dark:text-white'>
+							URLs
+						</span>
+					</Button>
+					<ModeToggle />
 					<ExternalLink
 						href='https://github.com/rguixaro/rask-app'
 						className={buttonVariants({
@@ -46,9 +63,22 @@ const Header = () => {
 						})}>
 						<GithubLogo width={20} name='GitHub Repository' />
 					</ExternalLink>
-					<ModeToggle />
 				</div>
 			</div>
+			<Dialog open={open} onOpenChange={setOpen}>
+				<DialogContent>
+					<DialogHeader className='mb-2'>
+						<DialogTitle />
+						<TypographyH4 className='font-mono'>
+							Your recent URLs
+						</TypographyH4>
+						<TypographyP className='text-gray-900 dark:text-white'>
+							Here you can see all the links you have created
+						</TypographyP>
+					</DialogHeader>
+					<LinksList />
+				</DialogContent>
+			</Dialog>
 		</nav>
 	);
 };
