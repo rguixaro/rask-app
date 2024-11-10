@@ -9,7 +9,7 @@ import ExternalLink from '@/ui/external-link';
 import { Badge } from '@/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/dialog';
 import { Button, buttonVariants } from '@/ui/button';
-import { TypographyH4, TypographyP } from '@/ui/typography';
+import { TypographyH3, TypographyH4, TypographyP } from '@/ui/typography';
 import { cn } from '@/utils';
 import LinksList from '../links/list';
 import { ModeToggle } from '../switch-theme';
@@ -35,7 +35,7 @@ const Header = () => {
 							href='/'
 							className='flex items-center space-x-3 transition-opacity hover:opacity-80 rtl:space-x-reverse'>
 							<Logo width={30} />
-							<span className='font-mono self-center whitespace-nowrap text-lg font-medium tracking-tight dark:text-white'>
+							<span className='font-mono self-center whitespace-nowrap text-lg md:text-xl font-medium tracking-tight dark:text-white'>
 								Rask
 							</span>
 							<Badge className='hidden cursor-pointer md:block'>
@@ -50,7 +50,7 @@ const Header = () => {
 						size='icon'
 						className='w-auto px-3'
 						onClick={() => setOpen(true)}>
-						<span className='font-mono text-md tracking-tight text-neutral-800 dark:text-white'>
+						<span className='font-mono md:text-lg tracking-tight text-neutral-800 dark:text-white'>
 							URLs
 						</span>
 					</Button>

@@ -39,15 +39,16 @@ const LinkItem = ({ link, copy }: LinkItemProps) => {
 			className={cn(
 				'bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-800',
 				'p-4 my-3 rounded-lg w-[90%]',
-				'text-xs text-neutral-900 dark:text-white'
+				'md:text-lg text-neutral-900 dark:text-white'
 			)}>
 			<div className='flex justify-between'>
-				<b className='text-md mb-1'>{link.slug}</b>
+				<span className='font-mono mb-1'>{link.slug}</span>
 				{link.visits && <span>{link.visits + ' visits'}</span>}
 			</div>
-
-			<p className='text-forest-500 dark:text-neutral-300'>{link.url}</p>
-			<div className='mt-2'>
+			<p className='text-forest-500 dark:text-neutral-300 text-xs md:text-base'>
+				{link.url}
+			</p>
+			<div className='mt-2 text-sm md:text-base'>
 				<span>{timeElapsed(link.created_at) + ' days ago'}</span>
 			</div>
 			<div className='mt-2 space-x-2'>
