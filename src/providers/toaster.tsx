@@ -11,7 +11,7 @@ export const ToasterComponent = () => {
 			theme={theme === 'dark' ? 'dark' : 'light'}
 			toastOptions={{
 				classNames: {
-					toast: 'font-sans dark:bg-forest-700 bg-forest-100 border-neutral-100 dark:border-neutral-800',
+					toast: 'font-sans dark:bg-forest-700 bg-forest-100 border-neutral-100 dark:border-neutral-800 dark:text-white',
 					description: 'font-mono',
 				},
 			}}
