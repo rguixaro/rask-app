@@ -2,8 +2,9 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import '@/styles/globals.css';
 
-import { ThemeProvider } from '@/components/providers/theme-provider';
-import { ToasterComponent } from '@/components/providers/toaster';
+import { ThemeProvider } from '@/providers/theme-provider';
+import { ToasterComponent } from '@/providers/toaster';
+import { AuthStoreProvider } from '@/providers/auth-store-provider';
 import Header from '@/components/layout/header';
 import { cn } from '@/utils';
 
@@ -57,15 +58,17 @@ export default function RootLayout({
 					'bg-white dark:bg-neutral-900',
 					'selection:bg-neutral-200 dark:selection:bg-neutral-700'
 				)}>
-				<ThemeProvider
-					attribute='class'
-					defaultTheme='system'
-					enableSystem
-					disableTransitionOnChange>
-					<Header />
-					{children}
-					<ToasterComponent />
-				</ThemeProvider>
+				<AuthStoreProvider>
+					<ThemeProvider
+						attribute='class'
+						defaultTheme='system'
+						enableSystem
+						disableTransitionOnChange>
+						<Header />
+						{children}
+						<ToasterComponent />
+					</ThemeProvider>
+				</AuthStoreProvider>
 			</body>
 		</html>
 	);

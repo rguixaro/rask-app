@@ -49,7 +49,7 @@ const LinkItem = ({ link, copy }: LinkItemProps) => {
 				{link.url}
 			</p>
 			<div className='mt-2 text-sm md:text-base'>
-				<span>{timeElapsed(link.created_at) + ' days ago'}</span>
+				<span>{timeElapsed(link.created_at)}</span>
 			</div>
 			<div className='mt-2 space-x-2'>
 				<Button variant='secondary' size='sm' onClick={handleVisit}>
