@@ -1,71 +1,36 @@
 import { useState, useEffect } from 'react';
 import { LoaderIcon } from 'lucide-react';
+import { toast } from 'sonner';
 
-import { LinkSchema } from '@/types';
+import { getLinks } from '@/services/api';
+import { useAuthStore } from '@/providers/auth-store-provider';
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
 import { TypographyP } from '@/ui/typography';
+import { LinkSchema } from '@/types';
+import { MESSAGES } from '@/utils/messages';
 import { cn } from '@/utils';
 import LinkItem from './item';
-
-function getLinks(): Promise<LinkSchema[]> {
-	return new Promise((resolve, reject) => {
-		resolve([
-			{
-				id: 1,
-				slug: 'rask.com/dphqwek12',
-				url: 'https://portfolio.rguixaro.dev',
-				visits: 10,
-				created_at: '2024-09-01T00:00:00.000Z',
-			},
-			{
-				id: 2,
-				slug: 'rask.com/cadfqwev4',
-				url: 'https://www.tecnoempleo.com/react-native-developer-hays/react-native-html-css/rf-562a122c22a6e379554e',
-				created_at: '2024-09-02T00:00:00.000Z',
-			},
-			{
-				id: 3,
-				slug: 'rask.com/l7uiykj31',
-				url: 'https://stackoverflow.com/questions/50739771/how-do-i-mock-a-promise-in-reactjs/50739868',
-				visits: 5,
-				created_at: '2024-09-03T00:00:00.000Z',
-			},
-			{
-				id: 4,
-				slug: 'rask.com/8qwek12',
-				url: 'https://www.google.com',
-				visits: 10,
-				created_at: '2024-09-01T00:00:00.000Z',
-			},
-			{
-				id: 5,
-				slug: 'rask.com/8qwek12',
-				url: 'https://www.google.com',
-				visits: 10,
-				created_at: '2024-09-01T00:00:00.000Z',
-			},
-			{
-				id: 6,
-				slug: 'rask.com/cadfcvasdv4',
-				url: 'https://www.tecnoempleo.com/react-native-developer-hays/react-native-html-css/rf-562a122c22a6e379554e',
-				created_at: '2024-09-02T00:00:00.000Z',
-			},
-		]);
-	});
-}
 
 const LinksList = () => {
 	const [loading, setLoading] = useState(true);
 	const [links, setLinks] = useState<LinkSchema[]>([]);
 
+	const { isAuthenticated } = useAuthStore((state) => state);
 	const { copy } = useCopyToClipboard();
 
 	useEffect(() => {
-		getLinks().then((data) => {
-			setLoading(false);
-			if (data) setLinks(data);
-		});
-	}, []);
+		if (!isAuthenticated) return;
+		getLinks()
+			.then(({ error, message, links }) => {
+				if (error) toast.error(MESSAGES.ERROR);
+				else if (links) setLinks(links);
+				setLoading(false);
+			})
+			.catch(() => {
+				toast.error(MESSAGES.ERROR);
+				setLoading(false);
+			});
+	}, [isAuthenticated]);
 
 	return (
 		<div
@@ -79,7 +44,13 @@ const LinksList = () => {
 					<TypographyP className='font-mono'>Loading...</TypographyP>
 				</div>
 			)}
-			{links.length && links.map((item) => LinkItem({ link: item, copy }))}
+			{links.length === 0 && !loading ? (
+				<TypographyP className='font-mono self-center'>
+					No recent URLs in your history!
+				</TypographyP>
+			) : (
+				links.length && links.map((item) => LinkItem({ link: item, copy }))
+			)}
 		</div>
 	);
 };

@@ -1,11 +1,19 @@
 'use client';
 
+import { ReactNode, useEffect, useState } from 'react';
+import { LoaderIcon, RocketIcon, ShuffleIcon } from 'lucide-react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import type { z } from 'zod';
+import JSConfetti from 'js-confetti';
+
+import { authenticate, checkIfLinkExists, createLink } from '@/services/api';
+import { useAuthStore } from '@/providers/auth-store-provider';
 import Footer from '@/components/layout/footer';
 import { Button } from '@/ui/button';
-import { TypographyH3, TypographyH4, TypographyP } from '@/ui/typography';
-import { LoaderIcon, RocketIcon, ShuffleIcon } from 'lucide-react';
-import { useForm } from 'react-hook-form';
 import { Input } from '@/ui/input';
+import { TypographyH3, TypographyH4, TypographyP } from '@/ui/typography';
 import {
 	Form,
 	FormControl,
@@ -14,14 +22,10 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/ui/form';
-import { toast } from 'sonner';
-import { zodResolver } from '@hookform/resolvers/zod';
-import type { z } from 'zod';
-import { CreateLinkSchema } from '@/types';
-import { ReactNode, useState } from 'react';
-import JSConfetti from 'js-confetti';
 import Alert from '@/ui/alert';
+import { CreateLinkSchema } from '@/types';
 import { cn } from '@/utils';
+import { MESSAGES } from '@/utils/messages';
 
 interface CreateLinkProps {
 	children: ReactNode;
@@ -33,57 +37,69 @@ export default function Home(props: CreateLinkProps) {
 	const [message, setMessage] = useState<string>('');
 	const [isError, setError] = useState<boolean>(false);
 
+	const { isAuthenticated, login } = useAuthStore((state) => state);
+
 	const form = useForm<z.infer<typeof CreateLinkSchema>>({
 		resolver: zodResolver(CreateLinkSchema),
-		defaultValues: {
-			url: '',
-			slug: props.slug ?? '',
-		},
+		defaultValues: { url: '', slug: props.slug ?? '' },
 	});
 
-	function createLink(values: z.infer<typeof CreateLinkSchema>) {
-		console.log('createLink', values);
-		return { error: false, limit: false };
+	/** Effect to check if the user is authenticated */
+	useEffect(() => {
+		if (!isAuthenticated) handleAuth();
+	}, [isAuthenticated]);
+
+	/** Authentication handler */
+	async function handleAuth() {
+		try {
+			const { error, message } = await authenticate();
+			if (error) {
+				toast.error(MESSAGES.ERROR);
+				return;
+			}
+			login();
+		} catch (error) {
+			toast.error(MESSAGES.ERROR);
+		}
 	}
 
-	// Form Submit method:
+	/**
+	 * onSubmit form handler
+	 * @param values
+	 */
 	const onSubmit = async (values: z.infer<typeof CreateLinkSchema>) => {
-		// Check if slug & url are equals to prevent infinite redirect =>
+		/** Check if the slug and the url are the same */
 		if (values.slug === values.url) {
 			setLoading(false);
 			setError(true);
-			setMessage('The URL and the slug cannot be the same');
+			setMessage(MESSAGES.SAME_SLUG_URL);
 			return;
 		}
-
 		try {
 			setLoading(true);
-
-			/* const slugExists = await checkIfSlugExist(values.slug);
-			if (slugExists) {
-				toast.error(
-					'The slug is already exist. Write another or generate a random slug.'
-				);
-				return;
-			} */
-
-			const result = await createLink(values);
-
-			if (result.error && result.limit) {
-				toast.info(result.error);
+			const { error: errorCheck, message: messageCheck } =
+				await checkIfLinkExists(values.slug);
+			if (errorCheck) {
+				toast.error(messageCheck || MESSAGES.ERROR);
 				return;
 			}
 
-			toast.success('Link created successfully', {
+			const { error: errorCreate, message: messageCreate } =
+				await createLink(values);
+			if (errorCreate) {
+				toast.error(messageCreate || MESSAGES.ERROR);
+				return;
+			}
+
+			toast.success(MESSAGES.LINK_CREATED, {
 				description: `Url: https://slug.vercel.app/${values.slug}`,
 				duration: 10000,
 				closeButton: true,
 			});
-
 			form.reset();
 			await generateConfetti();
 		} catch (error) {
-			toast.error('An unexpected error has occurred. Please try again later.');
+			toast.error(MESSAGES.ERROR);
 		} finally {
 			setError(false);
 			setMessage('');
@@ -91,16 +107,27 @@ export default function Home(props: CreateLinkProps) {
 		}
 	};
 
-	// Generate confetti animation:
+	/** Generate confetti animation */
 	const generateConfetti = async () => {
 		const jsConfetti = new JSConfetti();
 		await jsConfetti.addConfetti({
-			confettiColors: ['#fdd835', '#4caf50', '#2196f3', '#f44336', '#ff9800'],
+			confettiColors: [
+				'#a6bbb9',
+				'#789B84',
+				'#5A8470',
+				'#3D6C5F',
+				'#205550',
+				'#1B464B',
+			],
 			confettiRadius: 3,
 			confettiNumber: 50,
 		});
 	};
 
+	/**
+	 * Generate random slug
+	 * @param e
+	 */
 	const handleGenerateRandomSlug = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		const randomSlug = Math.random().toString(36).substring(7);
