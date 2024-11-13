@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LoaderIcon, RocketIcon, ShuffleIcon } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import type { z } from 'zod';
 import JSConfetti from 'js-confetti';
 
-import { authenticate, checkIfLinkExists, createLink } from '@/services/api';
+import { authenticate, createLink } from '@/services/api';
 import { useAuthStore } from '@/providers/auth-store-provider';
 import Footer from '@/components/layout/footer';
 import { Button } from '@/ui/button';
@@ -27,21 +27,17 @@ import { CreateLinkSchema } from '@/types';
 import { cn } from '@/utils';
 import { MESSAGES } from '@/utils/messages';
 
-interface CreateLinkProps {
-	children: ReactNode;
-	slug?: string;
-}
-
-export default function Home(props: CreateLinkProps) {
+export default function Home() {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [message, setMessage] = useState<string>('');
 	const [isError, setError] = useState<boolean>(false);
+	const [isRandomized, setIsRandomized] = useState<boolean>(false);
 
 	const { isAuthenticated, login } = useAuthStore((state) => state);
 
 	const form = useForm<z.infer<typeof CreateLinkSchema>>({
 		resolver: zodResolver(CreateLinkSchema),
-		defaultValues: { url: '', slug: props.slug ?? '' },
+		defaultValues: { url: '', slug: '', randomized: false },
 	});
 
 	/** Effect to check if the user is authenticated */
@@ -77,20 +73,12 @@ export default function Home(props: CreateLinkProps) {
 		}
 		try {
 			setLoading(true);
-			const { error: errorCheck, message: messageCheck } =
-				await checkIfLinkExists(values.slug);
-			if (errorCheck) {
-				toast.error(messageCheck || MESSAGES.ERROR);
-				return;
-			}
-
-			const { error: errorCreate, message: messageCreate } =
-				await createLink(values);
-			if (errorCreate) {
+			const { error, message, slug } = await createLink(values);
+			if (error) {
 				toast.error(
-					messageCreate
-						? Object.keys(MESSAGES).includes(messageCreate)
-							? MESSAGES[messageCreate as keyof typeof MESSAGES]
+					message
+						? Object.keys(MESSAGES).includes(message)
+							? MESSAGES[message as keyof typeof MESSAGES]
 							: MESSAGES.ERROR
 						: MESSAGES.ERROR
 				);
@@ -98,10 +86,11 @@ export default function Home(props: CreateLinkProps) {
 			}
 
 			toast.success(MESSAGES.LINK_CREATED, {
-				description: `Link: https://rask.rguixaro.dev/${values.slug}`,
+				description: `https://rask.rguixaro.dev/${slug}`,
 				duration: 10000,
 			});
 			form.reset();
+			if (values.randomized) form.setValue('randomized', isRandomized);
 			await generateConfetti();
 		} catch (error) {
 			toast.error(MESSAGES.ERROR);
@@ -130,13 +119,14 @@ export default function Home(props: CreateLinkProps) {
 	};
 
 	/**
-	 * Generate random slug
+	 * Randomize slug handler
 	 * @param e
 	 */
-	const handleGenerateRandomSlug = (e: React.MouseEvent<HTMLButtonElement>) => {
+	const handleRandomize = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
-		const randomSlug = Math.random().toString(36).substring(7);
-		form.setValue('slug', randomSlug);
+		form.setValue('randomized', !isRandomized);
+		form.setValue('slug', '');
+		setIsRandomized(!isRandomized);
 	};
 
 	return (
@@ -145,7 +135,7 @@ export default function Home(props: CreateLinkProps) {
 				'bg-forest-500 bg-[linear-gradient(to_right,#0000000a_1px,transparent_1px),linear-gradient(to_bottom,#0000000a_1px,transparent_1px)] bg-[size:14px_24px] dark:bg-forest-500',
 				'h-[calc(100vh-5rem)] min-h-[730px] flex flex-col justify-between items-center'
 			)}>
-			<section className='flex flex-col items-center px-6 text-center md:mt-16'>
+			<section className='flex flex-col items-center px-6 text-center'>
 				<TypographyH3 className='flex font-mono text-white max-w-[75ch] duration-500 animate-in fade-in-5 slide-in-from-bottom-2'>
 					Enhance Your Link Management
 				</TypographyH3>
@@ -154,7 +144,7 @@ export default function Home(props: CreateLinkProps) {
 					manage, and share short links with ease. It's fast, secure, and
 					easy to use.
 				</TypographyP>
-				<div className='bg-white/60 backdrop-blur-md dark:bg-neutral-900/60 rounded-2xl p-2 py-5 w-4/5 md:w-1/2 lg:w-5/12 mt-5 sm:mt-16 items-center justify-center gap-x-3 space-y-3 duration-700 animate-in fade-in-30 sm:flex sm:space-y-0 '>
+				<div className='bg-white/60 backdrop-blur-md dark:bg-neutral-900/60 rounded-2xl p-2 py-5 w-11/12 md:w-1/2 lg:w-5/12 mt-4 sm:mt-8 items-center justify-center gap-x-3 space-y-3 duration-700 animate-in fade-in-30 sm:flex sm:space-y-0 '>
 					<div className='p-8 rounded-xl bg-white flex-grow dark:bg-neutral-900 flex flex-col items-start justify-start'>
 						<TypographyH4 className='font-mono max-w-[75ch] duration-500 animate-in fade-in-5 slide-in-from-bottom-2 text-neutral-800 dark:text-white'>
 							Shorten a long link
@@ -197,22 +187,33 @@ export default function Home(props: CreateLinkProps) {
 														Customize your link
 													</FormLabel>
 													<FormControl>
-														<div className='relative flex items-center'>
+														<div className='relative flex items-center h-9'>
 															<Input
 																{...field}
-																placeholder='mylink'
+																placeholder='Link'
+																className={cn(
+																	'w-1/2 transition-opacity duration-500 rounded-br-none rounded-tr-none',
+																	`${isRandomized ? 'opacity-0' : 'opacity-100'}`
+																)}
 																disabled={loading}
 															/>
 															<Button
 																onClick={
-																	handleGenerateRandomSlug
+																	handleRandomize
 																}
 																variant='outline'
-																className='absolute right-0 rounded-none rounded-br-md rounded-tr-md '>
+																className={cn(
+																	'w-1/2 absolute right-0 rounded-none rounded-br-md rounded-tr-md duration-500 transition-all',
+																	`${isRandomized ? 'w-full rounded-md bg-forest-100 hover:bg-forest-600/50 dark:bg-forest-700 hover:dark:bg-forest-700/50  text-white' : 'hover:bg-forest-100/50 hover:dark:bg-forest-700/50 '}`
+																)}>
 																<ShuffleIcon
 																	size={14}
+																	className={cn(
+																		`transition-opacity duration-500`,
+																		`${isRandomized ? 'opacity-100' : 'opacity-0'}`
+																	)}
 																/>
-																<span>
+																<span className='font-mono text-xs sm:text-sm md:text-base pr-[14px]'>
 																	Randomize
 																</span>
 															</Button>
