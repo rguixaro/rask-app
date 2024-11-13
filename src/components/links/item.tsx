@@ -35,7 +35,7 @@ const LinkItem = ({ link, copy }: LinkItemProps) => {
 
 	return (
 		<div
-			key={link.id}
+			key={`key-id-${link.slug}`}
 			className={cn(
 				'bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-800',
 				'p-4 my-3 rounded-lg w-[90%]',
@@ -43,7 +43,9 @@ const LinkItem = ({ link, copy }: LinkItemProps) => {
 			)}>
 			<div className='flex justify-between'>
 				<span className='font-mono mb-1'>{link.slug}</span>
-				{link.visits && <span>{link.visits + ' visits'}</span>}
+				{(link.visits ?? 0) > 0 && (
+					<span className='text-sm'>{link.visits + ' visits'}</span>
+				)}
 			</div>
 			<p className='text-forest-500 dark:text-neutral-300 text-xs md:text-base'>
 				{link.url}

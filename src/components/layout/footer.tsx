@@ -18,7 +18,7 @@ const Footer = (props: FooterProps) => {
 			)}>
 			<BetaWarning />
 			<div className={cn('container flex items-center justify-between mt-2')}>
-				<div className='flex items-center space-x-2'>
+				<div className='flex items-center space-x-2 text-sm md:text-base'>
 					<p className='space-x-1'>
 						Made by{' '}
 						<ExternalLink

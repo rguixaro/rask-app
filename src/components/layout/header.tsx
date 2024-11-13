@@ -3,19 +3,22 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
+import { useAuthStore } from '@/providers/auth-store-provider';
 import Logo from '@/components/icons/logo';
 import { GithubLogo } from '@/components/icons/social';
 import ExternalLink from '@/ui/external-link';
 import { Badge } from '@/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/dialog';
 import { Button, buttonVariants } from '@/ui/button';
-import { TypographyH3, TypographyH4, TypographyP } from '@/ui/typography';
+import { TypographyH4, TypographyP } from '@/ui/typography';
 import { cn } from '@/utils';
 import LinksList from '../links/list';
 import { ModeToggle } from '../switch-theme';
 
 const Header = () => {
 	const [open, setOpen] = useState<boolean>(false);
+	const { isAuthenticated } = useAuthStore((state) => state);
+
 	return (
 		<nav
 			className={cn(
@@ -45,15 +48,17 @@ const Header = () => {
 					</div>
 				</div>
 				<div className='flex items-center space-x-5'>
-					<Button
-						variant='ghost'
-						size='icon'
-						className='w-auto px-3'
-						onClick={() => setOpen(true)}>
-						<span className='font-mono md:text-lg tracking-tight text-neutral-800 dark:text-white'>
-							URLs
-						</span>
-					</Button>
+					{isAuthenticated && (
+						<Button
+							variant='ghost'
+							size='icon'
+							className='w-auto px-3'
+							onClick={() => setOpen(true)}>
+							<span className='font-mono md:text-lg tracking-tight text-neutral-800 dark:text-white'>
+								URLs
+							</span>
+						</Button>
+					)}
 					<ModeToggle />
 					<ExternalLink
 						href='https://github.com/rguixaro/rask-app'
