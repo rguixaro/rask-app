@@ -15,8 +15,8 @@ export const CreateLinkSchema = z.object({
 		.url({
 			message: 'Please enter a valid URL. Include http:// or https://',
 		})
-		.regex(/^(?!.*(?:http|https):\/\/(?:slug|slugr)\.vercel\.app).*$/, {
-			message: 'You cannot redirect to the Slug url.',
+		.regex(/^(?!.*(?:http|https):\/\/(?:rask)\.rguixaro.dev).*$/, {
+			message: 'You cannot redirect to the Rask url.',
 		})
 		// not contain any blank spaces
 		.regex(/^\S+$/, {
