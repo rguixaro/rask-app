@@ -1,6 +1,7 @@
 export const MESSAGES = {
 	ERROR: 'An unexpected error has occurred. Please try again later.',
 	LINK_LIMIT_REACHED: 'You have reached the limit of links you can create.',
+	LINK_URL_REQUIRED: 'The link URL is required',
 	LINK_CREATED: 'Link created successfully',
 	LINK_EXISTS:
 		'This link already exists. Try another or use the randomize option.',

@@ -87,14 +87,19 @@ export default function Home(props: CreateLinkProps) {
 			const { error: errorCreate, message: messageCreate } =
 				await createLink(values);
 			if (errorCreate) {
-				toast.error(messageCreate || MESSAGES.ERROR);
+				toast.error(
+					messageCreate
+						? Object.keys(MESSAGES).includes(messageCreate)
+							? MESSAGES[messageCreate as keyof typeof MESSAGES]
+							: MESSAGES.ERROR
+						: MESSAGES.ERROR
+				);
 				return;
 			}
 
 			toast.success(MESSAGES.LINK_CREATED, {
-				description: `Url: https://slug.vercel.app/${values.slug}`,
+				description: `Link: https://rask.rguixaro.dev/${values.slug}`,
 				duration: 10000,
-				closeButton: true,
 			});
 			form.reset();
 			await generateConfetti();
@@ -140,8 +145,8 @@ export default function Home(props: CreateLinkProps) {
 				'bg-forest-500 bg-[linear-gradient(to_right,#0000000a_1px,transparent_1px),linear-gradient(to_bottom,#0000000a_1px,transparent_1px)] bg-[size:14px_24px] dark:bg-forest-500',
 				'h-[calc(100vh-5rem)] min-h-[730px] flex flex-col justify-between items-center'
 			)}>
-			<section className='flex flex-col items-center px-6 text-center'>
-				<TypographyH3 className='flex  font-mono text-white max-w-[75ch] duration-500 animate-in fade-in-5 slide-in-from-bottom-2'>
+			<section className='flex flex-col items-center px-6 text-center md:mt-16'>
+				<TypographyH3 className='flex font-mono text-white max-w-[75ch] duration-500 animate-in fade-in-5 slide-in-from-bottom-2'>
 					Enhance Your Link Management
 				</TypographyH3>
 				<TypographyP className='max-w-[75ch] text-white text-sm duration-700 animate-in fade-in-5 slide-in-from-top-2 md:text-base lg:text-lg xl:text-xl'>
@@ -149,12 +154,12 @@ export default function Home(props: CreateLinkProps) {
 					manage, and share short links with ease. It's fast, secure, and
 					easy to use.
 				</TypographyP>
-				<div className='bg-white/60 backdrop-blur-md dark:bg-neutral-900/60 rounded-2xl p-2 w-4/5 md:w-1/2 lg:w-1/3 mt-4 sm:mt-8 items-center justify-center gap-x-3 space-y-3 duration-700 animate-in fade-in-30 sm:flex sm:space-y-0 '>
-					<div className='p-5 rounded-xl bg-white flex-grow dark:bg-neutral-900 flex flex-col items-start justify-start'>
+				<div className='bg-white/60 backdrop-blur-md dark:bg-neutral-900/60 rounded-2xl p-2 py-5 w-4/5 md:w-1/2 lg:w-5/12 mt-5 sm:mt-16 items-center justify-center gap-x-3 space-y-3 duration-700 animate-in fade-in-30 sm:flex sm:space-y-0 '>
+					<div className='p-8 rounded-xl bg-white flex-grow dark:bg-neutral-900 flex flex-col items-start justify-start'>
 						<TypographyH4 className='font-mono max-w-[75ch] duration-500 animate-in fade-in-5 slide-in-from-bottom-2 text-neutral-800 dark:text-white'>
 							Shorten a long link
 						</TypographyH4>
-						<TypographyP className='max-w-[75ch] mb-5 duration-500 animate-in fade-in-5 slide-in-from-bottom-2 text-neutral-800 dark:text-white text-left'>
+						<TypographyP className='max-w-[75ch] mb-5 duration-500 animate-in fade-in-5 slide-in-from-bottom-2 text-neutral-800 dark:text-white text-left text-base sm:text-lg'>
 							You can create up to 10 short links/month
 						</TypographyP>
 						<div className='w-full'>
@@ -168,7 +173,7 @@ export default function Home(props: CreateLinkProps) {
 											name='url'
 											render={({ field }) => (
 												<FormItem className='text-left'>
-													<FormLabel className='font-mono text-md lg:text-lg text-neutral-800 dark:text-white'>
+													<FormLabel className='font-mono text-base md:text-xl text-neutral-800 dark:text-white'>
 														Paste your long link here
 													</FormLabel>
 													<FormControl>
@@ -188,7 +193,7 @@ export default function Home(props: CreateLinkProps) {
 											name='slug'
 											render={({ field }) => (
 												<FormItem className='text-left'>
-													<FormLabel className='font-mono text-md lg:text-lg text-neutral-800 dark:text-white'>
+													<FormLabel className='font-mono text-base md:text-xl text-neutral-800 dark:text-white'>
 														Customize your link
 													</FormLabel>
 													<FormControl>
@@ -222,16 +227,16 @@ export default function Home(props: CreateLinkProps) {
 										)}
 									</div>
 									<Button type='submit' disabled={loading}>
-										<div className='flex space-x-3 items-center mr-[16px] px-5'>
+										<div className='flex space-x-3 items-center mr-[16px] px-5 sm:px-10'>
 											{loading ? (
 												<LoaderIcon
 													size={16}
 													className='animate-spin'
 												/>
 											) : (
-												<RocketIcon size={16} />
+												<RocketIcon className='h-5 sm:h-8' />
 											)}
-											<span>
+											<span className='font-mono sm:text-base'>
 												{loading ? 'Creating...' : 'Create'}
 											</span>
 										</div>
