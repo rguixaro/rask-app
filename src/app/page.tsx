@@ -1,11 +1,19 @@
 'use client';
 
+import { ReactNode, useEffect, useState } from 'react';
+import { LoaderIcon, RocketIcon, ShuffleIcon } from 'lucide-react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import type { z } from 'zod';
+import JSConfetti from 'js-confetti';
+
+import { authenticate, checkIfLinkExists, createLink } from '@/services/api';
+import { useAuthStore } from '@/providers/auth-store-provider';
 import Footer from '@/components/layout/footer';
 import { Button } from '@/ui/button';
-import { TypographyH3, TypographyH4, TypographyP } from '@/ui/typography';
-import { LoaderIcon, RocketIcon, ShuffleIcon } from 'lucide-react';
-import { useForm } from 'react-hook-form';
 import { Input } from '@/ui/input';
+import { TypographyH3, TypographyH4, TypographyP } from '@/ui/typography';
 import {
 	Form,
 	FormControl,
@@ -14,14 +22,10 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/ui/form';
-import { toast } from 'sonner';
-import { zodResolver } from '@hookform/resolvers/zod';
-import type { z } from 'zod';
-import { CreateLinkSchema } from '@/types';
-import { ReactNode, useState } from 'react';
-import JSConfetti from 'js-confetti';
 import Alert from '@/ui/alert';
+import { CreateLinkSchema } from '@/types';
 import { cn } from '@/utils';
+import { MESSAGES } from '@/utils/messages';
 
 interface CreateLinkProps {
 	children: ReactNode;
@@ -33,57 +37,74 @@ export default function Home(props: CreateLinkProps) {
 	const [message, setMessage] = useState<string>('');
 	const [isError, setError] = useState<boolean>(false);
 
+	const { isAuthenticated, login } = useAuthStore((state) => state);
+
 	const form = useForm<z.infer<typeof CreateLinkSchema>>({
 		resolver: zodResolver(CreateLinkSchema),
-		defaultValues: {
-			url: '',
-			slug: props.slug ?? '',
-		},
+		defaultValues: { url: '', slug: props.slug ?? '' },
 	});
 
-	function createLink(values: z.infer<typeof CreateLinkSchema>) {
-		console.log('createLink', values);
-		return { error: false, limit: false };
+	/** Effect to check if the user is authenticated */
+	useEffect(() => {
+		if (!isAuthenticated) handleAuth();
+	}, [isAuthenticated]);
+
+	/** Authentication handler */
+	async function handleAuth() {
+		try {
+			const { error, message } = await authenticate();
+			if (error) {
+				toast.error(MESSAGES.ERROR);
+				return;
+			}
+			login();
+		} catch (error) {
+			toast.error(MESSAGES.ERROR);
+		}
 	}
 
-	// Form Submit method:
+	/**
+	 * onSubmit form handler
+	 * @param values
+	 */
 	const onSubmit = async (values: z.infer<typeof CreateLinkSchema>) => {
-		// Check if slug & url are equals to prevent infinite redirect =>
+		/** Check if the slug and the url are the same */
 		if (values.slug === values.url) {
 			setLoading(false);
 			setError(true);
-			setMessage('The URL and the slug cannot be the same');
+			setMessage(MESSAGES.SAME_SLUG_URL);
 			return;
 		}
-
 		try {
 			setLoading(true);
-
-			/* const slugExists = await checkIfSlugExist(values.slug);
-			if (slugExists) {
-				toast.error(
-					'The slug is already exist. Write another or generate a random slug.'
-				);
-				return;
-			} */
-
-			const result = await createLink(values);
-
-			if (result.error && result.limit) {
-				toast.info(result.error);
+			const { error: errorCheck, message: messageCheck } =
+				await checkIfLinkExists(values.slug);
+			if (errorCheck) {
+				toast.error(messageCheck || MESSAGES.ERROR);
 				return;
 			}
 
-			toast.success('Link created successfully', {
-				description: `Url: https://slug.vercel.app/${values.slug}`,
-				duration: 10000,
-				closeButton: true,
-			});
+			const { error: errorCreate, message: messageCreate } =
+				await createLink(values);
+			if (errorCreate) {
+				toast.error(
+					messageCreate
+						? Object.keys(MESSAGES).includes(messageCreate)
+							? MESSAGES[messageCreate as keyof typeof MESSAGES]
+							: MESSAGES.ERROR
+						: MESSAGES.ERROR
+				);
+				return;
+			}
 
+			toast.success(MESSAGES.LINK_CREATED, {
+				description: `Link: https://rask.rguixaro.dev/${values.slug}`,
+				duration: 10000,
+			});
 			form.reset();
 			await generateConfetti();
 		} catch (error) {
-			toast.error('An unexpected error has occurred. Please try again later.');
+			toast.error(MESSAGES.ERROR);
 		} finally {
 			setError(false);
 			setMessage('');
@@ -91,16 +112,27 @@ export default function Home(props: CreateLinkProps) {
 		}
 	};
 
-	// Generate confetti animation:
+	/** Generate confetti animation */
 	const generateConfetti = async () => {
 		const jsConfetti = new JSConfetti();
 		await jsConfetti.addConfetti({
-			confettiColors: ['#fdd835', '#4caf50', '#2196f3', '#f44336', '#ff9800'],
+			confettiColors: [
+				'#a6bbb9',
+				'#789B84',
+				'#5A8470',
+				'#3D6C5F',
+				'#205550',
+				'#1B464B',
+			],
 			confettiRadius: 3,
 			confettiNumber: 50,
 		});
 	};
 
+	/**
+	 * Generate random slug
+	 * @param e
+	 */
 	const handleGenerateRandomSlug = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		const randomSlug = Math.random().toString(36).substring(7);
@@ -113,8 +145,8 @@ export default function Home(props: CreateLinkProps) {
 				'bg-forest-500 bg-[linear-gradient(to_right,#0000000a_1px,transparent_1px),linear-gradient(to_bottom,#0000000a_1px,transparent_1px)] bg-[size:14px_24px] dark:bg-forest-500',
 				'h-[calc(100vh-5rem)] min-h-[730px] flex flex-col justify-between items-center'
 			)}>
-			<section className='flex flex-col items-center px-6 text-center'>
-				<TypographyH3 className='flex  font-mono text-white max-w-[75ch] duration-500 animate-in fade-in-5 slide-in-from-bottom-2'>
+			<section className='flex flex-col items-center px-6 text-center md:mt-16'>
+				<TypographyH3 className='flex font-mono text-white max-w-[75ch] duration-500 animate-in fade-in-5 slide-in-from-bottom-2'>
 					Enhance Your Link Management
 				</TypographyH3>
 				<TypographyP className='max-w-[75ch] text-white text-sm duration-700 animate-in fade-in-5 slide-in-from-top-2 md:text-base lg:text-lg xl:text-xl'>
@@ -122,12 +154,12 @@ export default function Home(props: CreateLinkProps) {
 					manage, and share short links with ease. It's fast, secure, and
 					easy to use.
 				</TypographyP>
-				<div className='bg-white/60 backdrop-blur-md dark:bg-neutral-900/60 rounded-2xl p-2 w-4/5 md:w-1/2 lg:w-1/3 mt-4 sm:mt-8 items-center justify-center gap-x-3 space-y-3 duration-700 animate-in fade-in-30 sm:flex sm:space-y-0 '>
-					<div className='p-5 rounded-xl bg-white flex-grow dark:bg-neutral-900 flex flex-col items-start justify-start'>
+				<div className='bg-white/60 backdrop-blur-md dark:bg-neutral-900/60 rounded-2xl p-2 py-5 w-4/5 md:w-1/2 lg:w-5/12 mt-5 sm:mt-16 items-center justify-center gap-x-3 space-y-3 duration-700 animate-in fade-in-30 sm:flex sm:space-y-0 '>
+					<div className='p-8 rounded-xl bg-white flex-grow dark:bg-neutral-900 flex flex-col items-start justify-start'>
 						<TypographyH4 className='font-mono max-w-[75ch] duration-500 animate-in fade-in-5 slide-in-from-bottom-2 text-neutral-800 dark:text-white'>
 							Shorten a long link
 						</TypographyH4>
-						<TypographyP className='max-w-[75ch] mb-5 duration-500 animate-in fade-in-5 slide-in-from-bottom-2 text-neutral-800 dark:text-white text-left'>
+						<TypographyP className='max-w-[75ch] mb-5 duration-500 animate-in fade-in-5 slide-in-from-bottom-2 text-neutral-800 dark:text-white text-left text-base sm:text-lg'>
 							You can create up to 10 short links/month
 						</TypographyP>
 						<div className='w-full'>
@@ -141,7 +173,7 @@ export default function Home(props: CreateLinkProps) {
 											name='url'
 											render={({ field }) => (
 												<FormItem className='text-left'>
-													<FormLabel className='font-mono text-md lg:text-lg text-neutral-800 dark:text-white'>
+													<FormLabel className='font-mono text-base md:text-xl text-neutral-800 dark:text-white'>
 														Paste your long link here
 													</FormLabel>
 													<FormControl>
@@ -161,7 +193,7 @@ export default function Home(props: CreateLinkProps) {
 											name='slug'
 											render={({ field }) => (
 												<FormItem className='text-left'>
-													<FormLabel className='font-mono text-md lg:text-lg text-neutral-800 dark:text-white'>
+													<FormLabel className='font-mono text-base md:text-xl text-neutral-800 dark:text-white'>
 														Customize your link
 													</FormLabel>
 													<FormControl>
@@ -195,16 +227,16 @@ export default function Home(props: CreateLinkProps) {
 										)}
 									</div>
 									<Button type='submit' disabled={loading}>
-										<div className='flex space-x-3 items-center mr-[16px] px-5'>
+										<div className='flex space-x-3 items-center mr-[16px] px-5 sm:px-10'>
 											{loading ? (
 												<LoaderIcon
 													size={16}
 													className='animate-spin'
 												/>
 											) : (
-												<RocketIcon size={16} />
+												<RocketIcon className='h-5 sm:h-8' />
 											)}
-											<span>
+											<span className='font-mono sm:text-base'>
 												{loading ? 'Creating...' : 'Create'}
 											</span>
 										</div>

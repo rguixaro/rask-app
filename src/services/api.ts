@@ -1,0 +1,94 @@
+import { z } from 'zod';
+import { AxiosError } from 'axios';
+
+import { CreateLinkSchema, LinkSchema } from '@/types';
+import { Client, API } from './client';
+
+interface authenticateResult {
+	error: boolean;
+	message?: string;
+}
+export const authenticate = async (): Promise<authenticateResult> => {
+	const response = await Client().post(`${API}/auth`);
+	const { status, data } = response;
+	if (status !== 200 || data?.error)
+		return { error: true, message: 'Failed to authenticate' };
+	return { error: false };
+};
+
+interface getLinksListResult {
+	error: boolean;
+	message?: string;
+	links?: LinkSchema[];
+}
+export const getLinksList = async (): Promise<getLinksListResult> => {
+	const response = await Client().get(`${API}/links-list`);
+	const { status, data } = response;
+	if (status !== 200 || data?.error || !data?.list)
+		return { error: true, message: 'Failed to fetch links list' };
+	return { error: false, links: data.list as LinkSchema[] };
+};
+
+interface checkLinkResult {
+	error: boolean;
+	message?: string;
+	url?: string;
+}
+export const checkLink = async (slug: string): Promise<checkLinkResult> => {
+	try {
+		const response = await Client().get(`${API}/link-check/${slug}`);
+		const { status, data } = response;
+		if (status !== 200 || data?.error || !data?.url)
+			return { error: true, message: data?.message || 'Failed to check link' };
+		return { error: false, url: data.url as string };
+	} catch (error: any) {
+		return {
+			error: true,
+			message: (error as string) || 'LINK_NOT_FOUND',
+		};
+	}
+};
+
+interface checkIfLinkExistsResult {
+	error: boolean;
+	message?: string;
+}
+export const checkIfLinkExists = async (
+	link: string
+): Promise<checkIfLinkExistsResult> => {
+	const response = await Client().get(`${API}/link-exists/${link}`);
+	const { status, data } = response;
+	if (status !== 200)
+		return { error: true, message: 'Failed to check if link exists' };
+	else if (data?.error) return { error: true, message: data?.message };
+	else return { error: false };
+};
+
+interface createLinkResult {
+	error: boolean;
+	message?: string;
+}
+export const createLink = async (
+	values: z.infer<typeof CreateLinkSchema>
+): Promise<createLinkResult> => {
+	try {
+		const response = await Client().post(`${API}/link-create`, values);
+		const { status, data } = response;
+		if (status === 201) return { error: false };
+		else
+			return { error: true, message: data.message || 'Failed to create link' };
+	} catch (error: any) {
+		if (error instanceof AxiosError) {
+			const { response } = error;
+			return {
+				error: true,
+				message: (response?.data?.message ??
+					'Failed to create link') as string,
+			};
+		}
+		return {
+			error: true,
+			message: (error?.message ?? 'Failed to create link') as string,
+		};
+	}
+};
