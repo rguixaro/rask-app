@@ -21,7 +21,7 @@ const LinksList = () => {
 	useEffect(() => {
 		if (!isAuthenticated) return;
 		getLinksList()
-			.then(({ error, message, links }) => {
+			.then(({ error, links }) => {
 				if (error) toast.error(MESSAGES.ERROR);
 				else if (links) setLinks(links);
 				setLoading(false);

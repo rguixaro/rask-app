@@ -43,12 +43,12 @@ export default function Home() {
 	/** Effect to check if the user is authenticated */
 	useEffect(() => {
 		if (!isAuthenticated) handleAuth();
-	}, [isAuthenticated]);
+	}, [isAuthenticated, handleAuth]);
 
 	/** Authentication handler */
 	async function handleAuth() {
 		try {
-			const { error, message } = await authenticate();
+			const { error } = await authenticate();
 			if (error) {
 				toast.error(MESSAGES.ERROR);
 				return;
@@ -140,9 +140,10 @@ export default function Home() {
 					Enhance Your Link Management
 				</TypographyH3>
 				<TypographyP className='max-w-[75ch] text-white text-sm duration-700 animate-in fade-in-5 slide-in-from-top-2 md:text-base lg:text-lg xl:text-xl'>
-					<b>Rask</b> is an open-source platform that allows you to create,
+					<b>Rask</b>
+					{` is an open-source platform that allows you to create,
 					manage, and share short links with ease. It's fast, secure, and
-					easy to use.
+					easy to use.`}
 				</TypographyP>
 				<div className='bg-white/60 backdrop-blur-md dark:bg-neutral-900/60 rounded-2xl p-2 py-5 w-11/12 md:w-1/2 lg:w-5/12 mt-4 sm:mt-8 items-center justify-center gap-x-3 space-y-3 duration-700 animate-in fade-in-30 sm:flex sm:space-y-0 '>
 					<div className='p-8 rounded-xl bg-white flex-grow dark:bg-neutral-900 flex flex-col items-start justify-start'>

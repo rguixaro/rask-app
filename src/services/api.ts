@@ -41,7 +41,7 @@ export const checkLink = async (slug: string): Promise<checkLinkResult> => {
 		if (status !== 200 || data?.error || !data?.url)
 			return { error: true, message: data?.message || 'Failed to check link' };
 		return { error: false, url: data.url as string };
-	} catch (error: any) {
+	} catch (error) {
 		return {
 			error: true,
 			message: (error as string) || 'LINK_NOT_FOUND',
@@ -63,7 +63,7 @@ export const createLink = async (
 		if (status === 201) return { error: false, slug: data.slug };
 		else
 			return { error: true, message: data.message || 'Failed to create link' };
-	} catch (error: any) {
+	} catch (error) {
 		if (error instanceof AxiosError) {
 			const { response } = error;
 			return {
