@@ -72,9 +72,6 @@ export const createLink = async (
 					'Failed to create link') as string,
 			};
 		}
-		return {
-			error: true,
-			message: (error?.message ?? 'Failed to create link') as string,
-		};
+		return { error: true, message: 'Failed to create link' };
 	}
 };
