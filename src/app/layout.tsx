@@ -1,21 +1,48 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
-import './globals.css';
+import '@/styles/globals.css';
 
-const geistSans = localFont({
-	src: './fonts/GeistVF.woff',
-	variable: '--font-geist-sans',
+import { ThemeProvider } from '@/providers/theme-provider';
+import { ToasterComponent } from '@/providers/toaster';
+import { AuthStoreProvider } from '@/providers/auth-store-provider';
+import Header from '@/components/layout/header';
+import { cn } from '@/utils';
+
+const interVariable = localFont({
+	variable: '--font-sans',
+	src: '../fonts/InterVariable.woff2',
 	weight: '100 900',
+	display: 'swap',
+	preload: true,
 });
-const geistMono = localFont({
-	src: './fonts/GeistMonoVF.woff',
+
+const geistMonoVariable = localFont({
 	variable: '--font-geist-mono',
+	src: '../fonts/GeistMonoVF.woff2',
 	weight: '100 900',
+	display: 'swap',
+	preload: true,
+});
+
+const atkinsonBold = localFont({
+	variable: '--font-atkinson-bold',
+	src: '../fonts/atkinson-bold.woff',
+	weight: '400',
+	display: 'swap',
+	preload: true,
+});
+
+const atkinsonRegular = localFont({
+	variable: '--font-atkinson-regular',
+	src: '../fonts/atkinson-regular.woff',
+	weight: '400',
+	display: 'swap',
+	preload: true,
 });
 
 export const metadata: Metadata = {
 	title: 'Rask',
-	description: ' An open-source URL shortener ',
+	description: 'An open-source URL shortener',
 };
 
 export default function RootLayout({
@@ -24,10 +51,24 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang='en'>
+		<html lang='en' suppressHydrationWarning>
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-				{children}
+				className={cn(
+					`font-sans ${interVariable.variable} ${geistMonoVariable.variable} ${atkinsonBold.variable} ${atkinsonRegular.variable}  antialiased`,
+					'bg-white dark:bg-neutral-900',
+					'selection:bg-neutral-200 dark:selection:bg-neutral-700'
+				)}>
+				<AuthStoreProvider>
+					<ThemeProvider
+						attribute='class'
+						defaultTheme='system'
+						enableSystem
+						disableTransitionOnChange>
+						<Header />
+						{children}
+						<ToasterComponent />
+					</ThemeProvider>
+				</AuthStoreProvider>
 			</body>
 		</html>
 	);

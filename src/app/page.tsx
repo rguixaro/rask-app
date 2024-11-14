@@ -1,101 +1,255 @@
-import Image from "next/image";
+'use client';
+
+import { useEffect, useState } from 'react';
+import { LoaderIcon, RocketIcon, ShuffleIcon } from 'lucide-react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import type { z } from 'zod';
+import JSConfetti from 'js-confetti';
+
+import { authenticate, createLink } from '@/services/api';
+import { useAuthStore } from '@/providers/auth-store-provider';
+import Footer from '@/components/layout/footer';
+import { Button } from '@/ui/button';
+import { Input } from '@/ui/input';
+import { TypographyH3, TypographyH4, TypographyP } from '@/ui/typography';
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from '@/ui/form';
+import Alert from '@/ui/alert';
+import { CreateLinkSchema } from '@/types';
+import { cn } from '@/utils';
+import { MESSAGES } from '@/utils/messages';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+	const [loading, setLoading] = useState<boolean>(false);
+	const [message, setMessage] = useState<string>('');
+	const [isError, setError] = useState<boolean>(false);
+	const [isRandomized, setIsRandomized] = useState<boolean>(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+	const { isAuthenticated, login } = useAuthStore((state) => state);
+
+	const form = useForm<z.infer<typeof CreateLinkSchema>>({
+		resolver: zodResolver(CreateLinkSchema),
+		defaultValues: { url: '', slug: '', randomized: false },
+	});
+
+	/** Effect to check if the user is authenticated */
+	useEffect(() => {
+		if (!isAuthenticated) handleAuth();
+	}, [isAuthenticated, handleAuth]);
+
+	/** Authentication handler */
+	async function handleAuth() {
+		try {
+			const { error } = await authenticate();
+			if (error) {
+				toast.error(MESSAGES.ERROR);
+				return;
+			}
+			login();
+		} catch (error) {
+			toast.error(MESSAGES.ERROR);
+		}
+	}
+
+	/**
+	 * onSubmit form handler
+	 * @param values
+	 */
+	const onSubmit = async (values: z.infer<typeof CreateLinkSchema>) => {
+		/** Check if the slug and the url are the same */
+		if (values.slug === values.url) {
+			setLoading(false);
+			setError(true);
+			setMessage(MESSAGES.SAME_SLUG_URL);
+			return;
+		}
+		try {
+			setLoading(true);
+			const { error, message, slug } = await createLink(values);
+			if (error) {
+				toast.error(
+					message
+						? Object.keys(MESSAGES).includes(message)
+							? MESSAGES[message as keyof typeof MESSAGES]
+							: MESSAGES.ERROR
+						: MESSAGES.ERROR
+				);
+				return;
+			}
+
+			toast.success(MESSAGES.LINK_CREATED, {
+				description: `https://rask.rguixaro.dev/${slug}`,
+				duration: 10000,
+			});
+			form.reset();
+			if (values.randomized) form.setValue('randomized', isRandomized);
+			await generateConfetti();
+		} catch (error) {
+			toast.error(MESSAGES.ERROR);
+		} finally {
+			setError(false);
+			setMessage('');
+			setLoading(false);
+		}
+	};
+
+	/** Generate confetti animation */
+	const generateConfetti = async () => {
+		const jsConfetti = new JSConfetti();
+		await jsConfetti.addConfetti({
+			confettiColors: [
+				'#a6bbb9',
+				'#789B84',
+				'#5A8470',
+				'#3D6C5F',
+				'#205550',
+				'#1B464B',
+			],
+			confettiRadius: 3,
+			confettiNumber: 50,
+		});
+	};
+
+	/**
+	 * Randomize slug handler
+	 * @param e
+	 */
+	const handleRandomize = (e: React.MouseEvent<HTMLButtonElement>) => {
+		e.preventDefault();
+		form.setValue('randomized', !isRandomized);
+		form.setValue('slug', '');
+		setIsRandomized(!isRandomized);
+	};
+
+	return (
+		<main
+			className={cn(
+				'bg-forest-500 bg-[linear-gradient(to_right,#0000000a_1px,transparent_1px),linear-gradient(to_bottom,#0000000a_1px,transparent_1px)] bg-[size:14px_24px] dark:bg-forest-500',
+				'h-[calc(100vh-5rem)] min-h-[730px] flex flex-col justify-between items-center'
+			)}>
+			<section className='flex flex-col items-center px-6 text-center'>
+				<TypographyH3 className='flex font-mono text-white max-w-[75ch] duration-500 animate-in fade-in-5 slide-in-from-bottom-2'>
+					Enhance Your Link Management
+				</TypographyH3>
+				<TypographyP className='max-w-[75ch] text-white text-sm duration-700 animate-in fade-in-5 slide-in-from-top-2 md:text-base lg:text-lg xl:text-xl'>
+					<b>Rask</b>
+					{` is an open-source platform that allows you to create,
+					manage, and share short links with ease. It's fast, secure, and
+					easy to use.`}
+				</TypographyP>
+				<div className='bg-white/60 backdrop-blur-md dark:bg-neutral-900/60 rounded-2xl p-2 py-5 w-11/12 md:w-1/2 lg:w-5/12 mt-4 sm:mt-8 items-center justify-center gap-x-3 space-y-3 duration-700 animate-in fade-in-30 sm:flex sm:space-y-0 '>
+					<div className='p-8 rounded-xl bg-white flex-grow dark:bg-neutral-900 flex flex-col items-start justify-start'>
+						<TypographyH4 className='font-mono max-w-[75ch] duration-500 animate-in fade-in-5 slide-in-from-bottom-2 text-neutral-800 dark:text-white'>
+							Shorten a long link
+						</TypographyH4>
+						<TypographyP className='max-w-[75ch] mb-5 duration-500 animate-in fade-in-5 slide-in-from-bottom-2 text-neutral-800 dark:text-white text-left text-base sm:text-lg'>
+							You can create up to 10 short links/month
+						</TypographyP>
+						<div className='w-full'>
+							<Form {...form}>
+								<form
+									onSubmit={form.handleSubmit(onSubmit)}
+									className='space-y-6 w-full'>
+									<div className='space-y-5'>
+										<FormField
+											control={form.control}
+											name='url'
+											render={({ field }) => (
+												<FormItem className='text-left'>
+													<FormLabel className='font-mono text-base md:text-xl text-neutral-800 dark:text-white'>
+														Paste your long link here
+													</FormLabel>
+													<FormControl>
+														<Input
+															{...field}
+															autoComplete='off'
+															placeholder='https://example.com/my-long-url'
+															disabled={loading}
+														/>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+										<FormField
+											control={form.control}
+											name='slug'
+											render={({ field }) => (
+												<FormItem className='text-left'>
+													<FormLabel className='font-mono text-base md:text-xl text-neutral-800 dark:text-white'>
+														Customize your link
+													</FormLabel>
+													<FormControl>
+														<div className='relative flex items-center h-9'>
+															<Input
+																{...field}
+																placeholder='Link'
+																className={cn(
+																	'w-1/2 transition-opacity duration-500 rounded-br-none rounded-tr-none',
+																	`${isRandomized ? 'opacity-0' : 'opacity-100'}`
+																)}
+																disabled={loading}
+															/>
+															<Button
+																onClick={
+																	handleRandomize
+																}
+																variant='outline'
+																className={cn(
+																	'w-1/2 absolute right-0 rounded-none rounded-br-md rounded-tr-md duration-500 transition-all',
+																	`${isRandomized ? 'w-full rounded-md bg-forest-100 hover:bg-forest-600/50 dark:bg-forest-700 hover:dark:bg-forest-700/50  text-white' : 'hover:bg-forest-100/50 hover:dark:bg-forest-700/50 '}`
+																)}>
+																<ShuffleIcon
+																	size={14}
+																	className={cn(
+																		`transition-opacity duration-500`,
+																		`${isRandomized ? 'opacity-100' : 'opacity-0'}`
+																	)}
+																/>
+																<span className='font-mono text-xs sm:text-sm md:text-base pr-[14px]'>
+																	Randomize
+																</span>
+															</Button>
+														</div>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+										{isError && (
+											<Alert variant='error'>{message}</Alert>
+										)}
+									</div>
+									<Button type='submit' disabled={loading}>
+										<div className='flex space-x-3 items-center mr-[16px] px-5 sm:px-10'>
+											{loading ? (
+												<LoaderIcon
+													size={16}
+													className='animate-spin'
+												/>
+											) : (
+												<RocketIcon className='h-5 sm:h-8' />
+											)}
+											<span className='font-mono sm:text-base'>
+												{loading ? 'Creating...' : 'Create'}
+											</span>
+										</div>
+									</Button>
+								</form>
+							</Form>
+						</div>
+					</div>
+				</div>
+			</section>
+			<Footer className='sm:w-1/2 mt-4 pt-4 pb-3' />
+		</main>
+	);
 }
