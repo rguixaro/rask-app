@@ -1,6 +1,6 @@
 {
 	"name": "rask-app",
-	"version": "0.1.0",
+	"version": "0.0.1",
 	"private": true,
 	"scripts": {
 		"dev": "next dev --turbopack",
@@ -61,10 +61,10 @@
 		"tailwindcss": "^3.4.1",
 		"typescript": "^5"
 	},
-    "packageManager": "npm@10.5.2",
-    "overrides": {
-        "react": "$react",
-        "react-dom": "$react-dom",
-        "next": "$next"
-    }
+	"packageManager": "npm@10.5.2",
+	"overrides": {
+		"react": "$react",
+		"react-dom": "$react-dom",
+		"next": "$next"
+	}
 }
