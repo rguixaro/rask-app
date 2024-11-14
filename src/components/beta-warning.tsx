@@ -12,7 +12,7 @@ const BetaWarning = () => {
 			)}
 			containerClassName='container'
 			iconSize={12}>
-			<p>
+			<p className='text-sm md:text-base'>
 				<b>Rask</b> is currently in its <b>beta version</b>. If you detect
 				any problem or bug, feel free to{' '}
 				<ExternalLink

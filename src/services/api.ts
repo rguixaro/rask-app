@@ -41,7 +41,7 @@ export const checkLink = async (slug: string): Promise<checkLinkResult> => {
 		if (status !== 200 || data?.error || !data?.url)
 			return { error: true, message: data?.message || 'Failed to check link' };
 		return { error: false, url: data.url as string };
-	} catch (error: any) {
+	} catch (error) {
 		return {
 			error: true,
 			message: (error as string) || 'LINK_NOT_FOUND',
@@ -49,24 +49,10 @@ export const checkLink = async (slug: string): Promise<checkLinkResult> => {
 	}
 };
 
-interface checkIfLinkExistsResult {
-	error: boolean;
-	message?: string;
-}
-export const checkIfLinkExists = async (
-	link: string
-): Promise<checkIfLinkExistsResult> => {
-	const response = await Client().get(`${API}/link-exists/${link}`);
-	const { status, data } = response;
-	if (status !== 200)
-		return { error: true, message: 'Failed to check if link exists' };
-	else if (data?.error) return { error: true, message: data?.message };
-	else return { error: false };
-};
-
 interface createLinkResult {
 	error: boolean;
 	message?: string;
+	slug?: string;
 }
 export const createLink = async (
 	values: z.infer<typeof CreateLinkSchema>
@@ -74,10 +60,10 @@ export const createLink = async (
 	try {
 		const response = await Client().post(`${API}/link-create`, values);
 		const { status, data } = response;
-		if (status === 201) return { error: false };
+		if (status === 201) return { error: false, slug: data.slug };
 		else
 			return { error: true, message: data.message || 'Failed to create link' };
-	} catch (error: any) {
+	} catch (error) {
 		if (error instanceof AxiosError) {
 			const { response } = error;
 			return {
@@ -86,9 +72,6 @@ export const createLink = async (
 					'Failed to create link') as string,
 			};
 		}
-		return {
-			error: true,
-			message: (error?.message ?? 'Failed to create link') as string,
-		};
+		return { error: true, message: 'Failed to create link' };
 	}
 };

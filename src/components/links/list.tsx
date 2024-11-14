@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { LoaderIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { getLinks } from '@/services/api';
+import { getLinksList } from '@/services/api';
 import { useAuthStore } from '@/providers/auth-store-provider';
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
 import { TypographyP } from '@/ui/typography';
@@ -20,8 +20,8 @@ const LinksList = () => {
 
 	useEffect(() => {
 		if (!isAuthenticated) return;
-		getLinks()
-			.then(({ error, message, links }) => {
+		getLinksList()
+			.then(({ error, links }) => {
 				if (error) toast.error(MESSAGES.ERROR);
 				else if (links) setLinks(links);
 				setLoading(false);
@@ -49,7 +49,7 @@ const LinksList = () => {
 					No recent URLs in your history!
 				</TypographyP>
 			) : (
-				links.length && links.map((item) => LinkItem({ link: item, copy }))
+				links.map((item) => LinkItem({ link: item, copy }))
 			)}
 		</div>
 	);
