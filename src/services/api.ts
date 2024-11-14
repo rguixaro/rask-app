@@ -49,24 +49,10 @@ export const checkLink = async (slug: string): Promise<checkLinkResult> => {
 	}
 };
 
-interface checkIfLinkExistsResult {
-	error: boolean;
-	message?: string;
-}
-export const checkIfLinkExists = async (
-	link: string
-): Promise<checkIfLinkExistsResult> => {
-	const response = await Client().get(`${API}/link-exists/${link}`);
-	const { status, data } = response;
-	if (status !== 200)
-		return { error: true, message: 'Failed to check if link exists' };
-	else if (data?.error) return { error: true, message: data?.message };
-	else return { error: false };
-};
-
 interface createLinkResult {
 	error: boolean;
 	message?: string;
+	slug?: string;
 }
 export const createLink = async (
 	values: z.infer<typeof CreateLinkSchema>
@@ -74,7 +60,7 @@ export const createLink = async (
 	try {
 		const response = await Client().post(`${API}/link-create`, values);
 		const { status, data } = response;
-		if (status === 201) return { error: false };
+		if (status === 201) return { error: false, slug: data.slug };
 		else
 			return { error: true, message: data.message || 'Failed to create link' };
 	} catch (error: any) {
