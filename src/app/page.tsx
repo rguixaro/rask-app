@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { LoaderIcon, RocketIcon, ShuffleIcon } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -40,13 +40,8 @@ export default function Home() {
 		defaultValues: { url: '', slug: '', randomized: false },
 	});
 
-	/** Effect to check if the user is authenticated */
-	useEffect(() => {
-		if (!isAuthenticated) handleAuth();
-	}, [isAuthenticated, handleAuth]);
-
 	/** Authentication handler */
-	async function handleAuth() {
+	const handleAuth = useCallback(async () => {
 		try {
 			const { error } = await authenticate();
 			if (error) {
@@ -57,7 +52,12 @@ export default function Home() {
 		} catch (error) {
 			toast.error(MESSAGES.ERROR);
 		}
-	}
+	}, []);
+
+	/** Effect to check if the user is authenticated */
+	useEffect(() => {
+		if (!isAuthenticated) handleAuth();
+	}, [isAuthenticated, handleAuth]);
 
 	/**
 	 * onSubmit form handler
