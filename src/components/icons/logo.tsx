@@ -4,63 +4,18 @@ const Logo: React.FC<ComponentProps<'svg'>> = (props) => {
 	return (
 		<svg
 			xmlns='http://www.w3.org/2000/svg'
-			xmlnsXlink='http://www.w3.org/1999/xlink'
+			width='24'
+			height='24'
 			fill='none'
-			viewBox='0 0 512 512'
-			{...props}>
-			<rect
-				id='r4'
-				width='512'
-				height='512'
-				x='0'
-				y='0'
-				fill='url(#r5)'
-				stroke='#FFF'
-				strokeOpacity='100%'
-				strokeWidth='0'
-				paintOrder='stroke'
-				rx='128'></rect>
-			<clipPath>
-				<use xlinkHref='#r4'></use>
-			</clipPath>
-			<defs>
-				<linearGradient
-					id='r5'
-					gradientTransform='rotate(45)'
-					gradientUnits='userSpaceOnUse'
-					style={{
-						WebkitTransformOrigin: 'center center',
-						transformOrigin: 'center center',
-					}}>
-					<stop stopColor='#1F1F1F'></stop>
-					<stop offset='1'></stop>
-				</linearGradient>
-				<radialGradient
-					cx='0'
-					cy='0'
-					r='1'
-					gradientTransform='matrix(0 512 -512 0 256 0)'
-					gradientUnits='userSpaceOnUse'>
-					<stop stopColor='#fff'></stop>
-					<stop offset='1' stopColor='#fff' stopOpacity='0'></stop>
-				</radialGradient>
-			</defs>
-			<svg
-				xmlns='http://www.w3.org/2000/svg'
-				width='320'
-				height='320'
-				x='96'
-				y='96'
-				alignmentBaseline='middle'
-				color='#C7C7C7'
-				viewBox='0 0 16 16'>
-				<path
-					stroke='currentColor'
-					strokeLinecap='round'
-					strokeLinejoin='round'
-					strokeWidth='1.5'
-					d='M4.25 7.75L2.539 9.654a2.692 2.692 0 103.807 3.807L8.25 11.75m3.5-3.5l1.711-1.904A2.692 2.692 0 109.654 2.54L7.75 4.25m-1 5l2.5-2.5'></path>
-			</svg>
+			viewBox='0 0 24 24'>
+			<path
+				fill='#205550'
+				d='M19.7388 4.26118c-2.6816-2.68157-7.0293-2.68157-9.7109 0l-.72083.72085c-.29289.29289-.29289.76777 0 1.06066.2929.29289.76773.29289 1.06063 0l.7209-.72085c2.0958-2.09579 5.4937-2.09579 7.5895 0 2.0958 2.09579 2.0958 5.49376 0 7.58956l-.7208.7208c-.2929.2929-.2929.7678 0 1.0607.2929.2929.7677.2929 1.0606 0l.7209-.7209c2.6815-2.6815 2.6815-7.02924 0-9.71082ZM6.04269 9.30707c.29289.2929.29289.76773 0 1.06063l-.72085.7209c-2.09579 2.0958-2.09579 5.4937 0 7.5895 2.09579 2.0958 5.49376 2.0958 7.58956 0l.7208-.7208c.2929-.2929.7678-.2929 1.0607 0 .2929.2928.2929.7677 0 1.0606l-.7209.7209c-2.6815 2.6815-7.02924 2.6815-9.71082 0-2.68157-2.6816-2.68157-7.0293 0-9.7109l.72085-.72083c.29289-.29289.76777-.29289 1.06066 0Z'
+			/>
+			<path
+				fill='#1B464B'
+				d='M14.6928 9.30707c.2929.2929.2929.76773 0 1.06063l-4.3251 4.3251c-.2929.2929-.76773.2929-1.06063 0-.29289-.2929-.29289-.7677 0-1.0606l4.32513-4.32513c.2929-.29289.7677-.29289 1.0606 0Z'
+			/>
 		</svg>
 	);
 };
