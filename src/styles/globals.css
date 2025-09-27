@@ -1,3 +1,65 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Configure dark mode to work with class selector like v3 */
+@variant dark (.dark &);
+
+@theme {
+  /* Font families */
+  --font-sans: var(--font-atkinson-regular), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-atkinson-bold), ui-monospace, monospace;
+  
+  /* Forest color palette */
+  --color-forest-100: #a6bbb9;
+  --color-forest-200: #789B84;
+  --color-forest-300: #5A8470;
+  --color-forest-400: #3D6C5F;
+  --color-forest-500: #205550;
+  --color-forest-600: #1B464B;
+  --color-forest-700: #1a2f2d;
+  
+  /* Container settings from v3 */
+  --container-center: true;
+  --container-padding: 1rem;
+  --breakpoint-2xl: 1400px;
+  
+  /* Animation keyframes from v3 */
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-background-shine: background-shine 2s linear infinite;
+}
+
+.font-mono {
+  font-family: var(--font-atkinson-bold), ui-monospace, monospace !important;
+}
+
+.font-sans {
+  font-family: var(--font-atkinson-regular), ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Keyframe definitions */
+@keyframes accordion-down {
+  from { height: 0; }
+  to { height: var(--radix-accordion-content-height); }
+}
+
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); }
+  to { height: 0; }
+}
+
+@keyframes background-shine {
+  from { background-position: 0 0; }
+  to { background-position: -200% 0; }
+}
+
+/* Dark mode configuration */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+  }
+}
+
+/* Ensure dark mode works with class-based toggle */
+.dark {
+  color-scheme: dark;
+}
