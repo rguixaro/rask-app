@@ -54,9 +54,9 @@ export default function RootLayout({
 		<html lang='en' suppressHydrationWarning>
 			<body
 				className={cn(
-					`font-sans ${interVariable.variable} ${geistMonoVariable.variable} ${atkinsonBold.variable} ${atkinsonRegular.variable}  antialiased`,
+					`font-sans ${interVariable.variable} ${geistMonoVariable.variable} ${atkinsonBold.variable} ${atkinsonRegular.variable} antialiased`,
 					'bg-white dark:bg-neutral-900',
-					'selection:bg-neutral-200 dark:selection:bg-neutral-700'
+					'selection:bg-neutral-200 dark:selection:bg-neutral-700',
 				)}>
 				<AuthStoreProvider>
 					<ThemeProvider
@@ -71,5 +71,5 @@ export default function RootLayout({
 				</AuthStoreProvider>
 			</body>
 		</html>
-	);
+	)
 }
