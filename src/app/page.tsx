@@ -5,11 +5,11 @@ import { LoaderIcon, RocketIcon, ShuffleIcon } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import type { z } from 'zod';
 import JSConfetti from 'js-confetti';
 
 import { authenticate, createLink } from '@/services/api';
 import { useAuthStore } from '@/providers/auth-store-provider';
+import { useCopyToClipboard } from '@/hooks/useCopyToClipboard'
 import Footer from '@/components/layout/footer';
 import { Button } from '@/ui/button';
 import { Input } from '@/ui/input';
@@ -23,7 +23,7 @@ import {
 	FormMessage,
 } from '@/ui/form';
 import Alert from '@/ui/alert';
-import { CreateLinkSchema } from '@/types';
+import { CreateLinkSchema, type CreateLinkInput } from '@/types';
 import { cn } from '@/utils';
 import { MESSAGES } from '@/utils/messages';
 
@@ -35,7 +35,9 @@ export default function Home() {
 
 	const { isAuthenticated, login } = useAuthStore((state) => state);
 
-	const form = useForm<z.infer<typeof CreateLinkSchema>>({
+    const { copy } = useCopyToClipboard();
+
+	const form = useForm<CreateLinkInput>({
 		resolver: zodResolver(CreateLinkSchema),
 		defaultValues: { url: '', slug: '', randomized: false },
 	});
@@ -49,10 +51,10 @@ export default function Home() {
 				return;
 			}
 			login();
-		} catch (error) {
+		} catch {
 			toast.error(MESSAGES.ERROR);
 		}
-	}, []);
+	}, [login]);
 
 	/** Effect to check if the user is authenticated */
 	useEffect(() => {
@@ -63,7 +65,7 @@ export default function Home() {
 	 * onSubmit form handler
 	 * @param values
 	 */
-	const onSubmit = async (values: z.infer<typeof CreateLinkSchema>) => {
+	const onSubmit = async (values: CreateLinkInput) => {
 		/** Check if the slug and the url are the same */
 		if (values.slug === values.url) {
 			setLoading(false);
@@ -72,7 +74,7 @@ export default function Home() {
 			return;
 		}
 		try {
-			setLoading(true);
+			setLoading(true)
 			const { error, message, slug } = await createLink(values);
 			if (error) {
 				toast.error(
@@ -85,14 +87,21 @@ export default function Home() {
 				return;
 			}
 
-			toast.success(MESSAGES.LINK_CREATED, {
-				description: `https://rask.rguixaro.dev/${slug}`,
+			 toast.success(MESSAGES.LINK_CREATED, {
+				description: `${process.env.NEXT_PUBLIC_APP_URL}/${slug}`,
 				duration: 10000,
-			});
+				action: {
+					label: 'Copy',
+					onClick: () => {
+                        copy(`${process.env.NEXT_PUBLIC_APP_URL}/${slug}`)
+						toast.success('Copied to clipboard!');
+					}
+				}
+			})
 			form.reset();
-			if (values.randomized) form.setValue('randomized', isRandomized);
-			await generateConfetti();
-		} catch (error) {
+			if (values.randomized) form.setValue('randomized', isRandomized)
+			await generateConfetti()
+		} catch {
 			toast.error(MESSAGES.ERROR);
 		} finally {
 			setError(false);

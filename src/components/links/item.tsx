@@ -14,11 +14,11 @@ interface LinkItemProps {
 }
 
 const LinkItem = ({ link, copy }: LinkItemProps) => {
-	const handleCopy = (text: string) => () => {
-		copy(text)
+	const handleCopy = (url: string) => () => {
+		copy(url)
 			.then(() =>
 				toast.success('Link copied to clipboard', {
-					description: `${text}`,
+					description: `${url}`,
 				})
 			)
 			.catch((error) =>
@@ -26,7 +26,7 @@ const LinkItem = ({ link, copy }: LinkItemProps) => {
 					'An unexpected error has occurred. Please try again later.',
 					{ description: error }
 				)
-			);
+			)
 	};
 
 	const handleVisit = () => {
@@ -41,13 +41,13 @@ const LinkItem = ({ link, copy }: LinkItemProps) => {
 				'p-4 my-3 rounded-lg w-[90%]',
 				'md:text-lg text-neutral-900 dark:text-white'
 			)}>
-			<div className='flex justify-between'>
-				<span className='font-mono mb-1'>{link.slug}</span>
+			<div className='flex justify-between items-start'>
+				<span className='font-mono mb-1 break-words overflow-wrap-anywhere flex-1 mr-2'>{link.slug}</span>
 				{(link.visits ?? 0) > 0 && (
-					<span className='text-sm'>{link.visits + ' visits'}</span>
+					<span className='text-sm flex-shrink-0'>{link.visits + ' visits'}</span>
 				)}
 			</div>
-			<p className='text-forest-500 dark:text-neutral-300 text-xs md:text-base'>
+			<p className='text-forest-500 dark:text-neutral-300 text-xs md:text-base break-words overflow-wrap-anywhere'>
 				{link.url}
 			</p>
 			<div className='mt-2 text-sm md:text-base'>
@@ -63,7 +63,7 @@ const LinkItem = ({ link, copy }: LinkItemProps) => {
 				<Button
 					variant='secondary'
 					size='sm'
-					onClick={handleCopy(link.slug)}>
+					onClick={handleCopy(`${process.env.NEXT_PUBLIC_APP_URL}/${link.slug}`)}>
 					<div className='flex items-center space-x-1'>
 						<ClipboardIcon size={12} />
 						<span>Copy</span>
