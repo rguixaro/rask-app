@@ -34,7 +34,7 @@ export const CreateLinkSchema = z
 					'Custom short link must not contain any blank spaces or special characters.',
 			})
 			.or(z.literal('')),
-		randomized: z.boolean().default(false),
+		randomized: z.boolean(),
 	})
 	.refine(({ randomized, slug }) => randomized || slug, {
 		message: 'Link or Randomize is required.',

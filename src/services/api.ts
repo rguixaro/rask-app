@@ -2,15 +2,15 @@ import { z } from 'zod';
 import { AxiosError } from 'axios';
 
 import { CreateLinkSchema, LinkSchema } from '@/types';
-import { Client, API } from './client';
+import { Client } from './client';
 
 interface authenticateResult {
 	error: boolean;
 	message?: string;
 }
 export const authenticate = async (): Promise<authenticateResult> => {
-	const response = await Client().post(`${API}/auth`);
-	const { status, data } = response;
+	const response = await Client().post('/auth');
+    const { status, data } = response;
 	if (status !== 200 || data?.error)
 		return { error: true, message: 'Failed to authenticate' };
 	return { error: false };
@@ -22,7 +22,7 @@ interface getLinksListResult {
 	links?: LinkSchema[];
 }
 export const getLinksList = async (): Promise<getLinksListResult> => {
-	const response = await Client().get(`${API}/links-list`);
+	const response = await Client().get('/links-list');
 	const { status, data } = response;
 	if (status !== 200 || data?.error || !data?.list)
 		return { error: true, message: 'Failed to fetch links list' };
@@ -36,7 +36,7 @@ interface checkLinkResult {
 }
 export const checkLink = async (slug: string): Promise<checkLinkResult> => {
 	try {
-		const response = await Client().get(`${API}/link-check/${slug}`);
+		const response = await Client().get(`/link-check/${slug}`);
 		const { status, data } = response;
 		if (status !== 200 || data?.error || !data?.url)
 			return { error: true, message: data?.message || 'Failed to check link' };
@@ -58,7 +58,7 @@ export const createLink = async (
 	values: z.infer<typeof CreateLinkSchema>
 ): Promise<createLinkResult> => {
 	try {
-		const response = await Client().post(`${API}/link-create`, values);
+		const response = await Client().post('/link-create', values);
 		const { status, data } = response;
 		if (status === 201) return { error: false, slug: data.slug };
 		else
