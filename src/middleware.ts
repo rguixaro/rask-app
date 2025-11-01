@@ -36,7 +36,18 @@ export async function middleware(request: NextRequest) {
 			return NextResponse.redirect(new URL('/', request.url).toString());
 		}
 
-		return NextResponse.redirect(new URL(data.url).toString());
+		// Validate URL to prevent open redirect vulnerability
+		try {
+			const redirectUrl = new URL(data.url);
+			// Only allow http and https protocols
+			if (redirectUrl.protocol !== 'http:' && redirectUrl.protocol !== 'https:') {
+				return NextResponse.redirect(new URL('/', request.url).toString());
+			}
+			return NextResponse.redirect(redirectUrl.toString());
+		} catch {
+			// Invalid URL format
+			return NextResponse.redirect(new URL('/', request.url).toString());
+		}
 	} catch (error) {
 		console.error('Middleware error:', error);
 		return NextResponse.redirect(new URL('/', request.url).toString());
