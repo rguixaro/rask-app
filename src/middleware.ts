@@ -16,9 +16,16 @@ export async function middleware(request: NextRequest) {
 			return NextResponse.redirect(new URL('/', request.url).toString());
 		}
 
+		// Add timeout to prevent hanging requests
+		const controller = new AbortController();
+		const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
 		const response = await fetch(`${apiUrl}/link-check/${linkRoute}`, {
 			credentials: 'include',
+			signal: controller.signal,
 		});
+
+		clearTimeout(timeoutId);
 
 		if (!response.ok) {
 			return NextResponse.redirect(new URL('/', request.url).toString());
