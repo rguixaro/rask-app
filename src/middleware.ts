@@ -13,7 +13,7 @@ export async function middleware(request: NextRequest) {
 		const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 		if (!apiUrl) {
 			console.error('NEXT_PUBLIC_API_URL is not defined');
-			return;
+			return NextResponse.redirect(new URL('/', request.url).toString());
 		}
 
 		const response = await fetch(`${apiUrl}/link-check/${linkRoute}`, {
@@ -21,18 +21,18 @@ export async function middleware(request: NextRequest) {
 		});
 
 		if (!response.ok) {
-			return;
+			return NextResponse.redirect(new URL('/', request.url).toString());
 		}
 
 		const data = await response.json();
 		if (data?.error || !data?.url) {
-			return;
+			return NextResponse.redirect(new URL('/', request.url).toString());
 		}
 
 		return NextResponse.redirect(new URL(data.url).toString());
 	} catch (error) {
 		console.error('Middleware error:', error);
-		return;
+		return NextResponse.redirect(new URL('/', request.url).toString());
 	}
 }
 
