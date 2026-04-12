@@ -1,5 +1,16 @@
 import type { NextConfig } from 'next'
 
+const requiredEnvVars = [
+	'NEXT_PUBLIC_APP_URL',
+	'NEXT_PUBLIC_API_URL',
+	'API_URL',
+] as const
+for (const envVar of requiredEnvVars) {
+	if (!process.env[envVar]) {
+		throw new Error(`Missing required environment variable: ${envVar}`)
+	}
+}
+
 const isDev = process.env.NODE_ENV === 'development'
 const apiOrigin = new URL(process.env.API_URL!).origin
 
@@ -34,6 +45,15 @@ const nextConfig: NextConfig = {
 			{
 				source: '/(.*)',
 				headers: securityHeaders,
+			},
+		]
+	},
+	async rewrites() {
+		if (!isDev) return []
+		return [
+			{
+				source: '/api-proxy/:path*',
+				destination: `${process.env.API_URL}/:path*`,
 			},
 		]
 	},
