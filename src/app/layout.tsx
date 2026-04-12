@@ -1,12 +1,12 @@
-import type { Metadata } from 'next';
-import localFont from 'next/font/local';
-import '@/styles/globals.css';
+import type { Metadata } from 'next'
+import localFont from 'next/font/local'
+import '@/styles/globals.css'
 
-import { ThemeProvider } from '@/providers/theme-provider';
-import { ToasterComponent } from '@/providers/toaster';
-import { AuthStoreProvider } from '@/providers/auth-store-provider';
-import Header from '@/components/layout/header';
-import { cn } from '@/utils';
+import { ThemeProvider } from '@/providers/theme-provider'
+import { ToasterComponent } from '@/providers/toaster'
+import { AuthStoreProvider } from '@/providers/auth-store-provider'
+import Header from '@/components/layout/header'
+import { cn } from '@/utils'
 
 const interVariable = localFont({
 	variable: '--font-sans',
@@ -14,7 +14,7 @@ const interVariable = localFont({
 	weight: '100 900',
 	display: 'swap',
 	preload: true,
-});
+})
 
 const geistMonoVariable = localFont({
 	variable: '--font-geist-mono',
@@ -22,7 +22,7 @@ const geistMonoVariable = localFont({
 	weight: '100 900',
 	display: 'swap',
 	preload: true,
-});
+})
 
 const atkinsonBold = localFont({
 	variable: '--font-atkinson-bold',
@@ -30,7 +30,7 @@ const atkinsonBold = localFont({
 	weight: '400',
 	display: 'swap',
 	preload: true,
-});
+})
 
 const atkinsonRegular = localFont({
 	variable: '--font-atkinson-regular',
@@ -38,17 +38,23 @@ const atkinsonRegular = localFont({
 	weight: '400',
 	display: 'swap',
 	preload: true,
-});
+})
 
 export const metadata: Metadata = {
 	title: 'Rask',
 	description: 'An open-source URL shortener',
-};
+	icons: {
+		icon: [
+			{ url: '/images/logo.svg', type: 'image/svg+xml' },
+			{ url: '/favicon.ico' },
+		],
+	},
+}
 
 export default function RootLayout({
 	children,
 }: Readonly<{
-	children: React.ReactNode;
+	children: React.ReactNode
 }>) {
 	return (
 		<html lang='en' suppressHydrationWarning>
