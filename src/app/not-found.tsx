@@ -1,14 +1,14 @@
-import { headers } from 'next/headers';
-import Link from 'next/link';
-import { ArrowUpRight, HomeIcon } from 'lucide-react';
+import { headers } from 'next/headers'
+import Link from 'next/link'
+import { ArrowUpRight, HomeIcon } from 'lucide-react'
 
-import Footer from '@/components/layout/footer';
-import { buttonVariants } from '@/ui/button';
-import ExternalLink from '@/ui/external-link';
+import Footer from '@/components/layout/footer'
+import { buttonVariants } from '@/ui/button'
+import ExternalLink from '@/ui/external-link'
 
 const NotFoundPage = async () => {
-	const headersList = await headers();
-	const domain = headersList.get('host');
+	const headersList = await headers()
+	const domain = headersList.get('host') ?? 'this site'
 	return (
 		<>
 			<div className='mx-auto max-w-screen-xl px-4 py-8 lg:py-16'>
@@ -40,7 +40,7 @@ const NotFoundPage = async () => {
 			</div>
 			<Footer className='fixed bottom-0 mt-4 py-4' />
 		</>
-	);
-};
+	)
+}
 
-export default NotFoundPage;
+export default NotFoundPage

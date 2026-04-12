@@ -1,23 +1,23 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import Link from 'next/link';
+import { useState } from 'react'
+import Link from 'next/link'
 
-import { useAuthStore } from '@/providers/auth-store-provider';
-import Logo from '@/components/icons/logo';
-import { GithubLogo } from '@/components/icons/social';
-import ExternalLink from '@/ui/external-link';
-import { Badge } from '@/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/dialog';
-import { Button, buttonVariants } from '@/ui/button';
-import { TypographyH4, TypographyP } from '@/ui/typography';
-import { cn } from '@/utils';
-import LinksList from '../links/list';
-import { ModeToggle } from '../switch-theme';
+import { useAuthStore } from '@/providers/auth-store-provider'
+import Logo from '@/components/icons/logo'
+import { GithubLogo } from '@/components/icons/social'
+import ExternalLink from '@/ui/external-link'
+import { Badge } from '@/ui/badge'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/dialog'
+import { Button, buttonVariants } from '@/ui/button'
+import { TypographyH4, TypographyP } from '@/ui/typography'
+import { cn } from '@/utils'
+import LinksList from '../links/list'
+import { ModeToggle } from '../switch-theme'
 
 const Header = () => {
-	const [open, setOpen] = useState<boolean>(false);
-	const { isAuthenticated } = useAuthStore((state) => state);
+	const [open, setOpen] = useState<boolean>(false)
+	const { isAuthenticated } = useAuthStore((state) => state)
 
 	return (
 		<nav
@@ -25,12 +25,12 @@ const Header = () => {
 				'flex w-full min-h-20 justify-center',
 				'lg:px-4',
 				'sticky top-0 z-50',
-				'bg-white dark:bg-neutral-900'
+				'bg-white dark:bg-neutral-900',
 			)}>
 			<div
 				className={cn(
 					'flex w-full px-5 items-center justify-between',
-					'container'
+					'container',
 				)}>
 				<div className='flex items-center space-x-5'>
 					<div className='flex items-center space-x-1 pr-1 md:pr-4'>
@@ -81,11 +81,11 @@ const Header = () => {
 							Here you can see all the links you have created
 						</TypographyP>
 					</DialogHeader>
-					<LinksList />
+					<LinksList open={open} />
 				</DialogContent>
 			</Dialog>
 		</nav>
-	);
-};
+	)
+}
 
-export default Header;
+export default Header

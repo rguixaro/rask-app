@@ -1,19 +1,19 @@
-'use client';
+'use client'
 
-import { useCallback, useEffect, useState } from 'react';
-import { LoaderIcon, RocketIcon, ShuffleIcon } from 'lucide-react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import JSConfetti from 'js-confetti';
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { LoaderIcon, RocketIcon, ShuffleIcon } from 'lucide-react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import JSConfetti from 'js-confetti'
 
-import { authenticate, createLink } from '@/services/api';
-import { useAuthStore } from '@/providers/auth-store-provider';
+import { authenticate, createLink } from '@/services/api'
+import { useAuthStore } from '@/providers/auth-store-provider'
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard'
-import Footer from '@/components/layout/footer';
-import { Button } from '@/ui/button';
-import { Input } from '@/ui/input';
-import { TypographyH3, TypographyH4, TypographyP } from '@/ui/typography';
+import Footer from '@/components/layout/footer'
+import { Button } from '@/ui/button'
+import { Input } from '@/ui/input'
+import { TypographyH3, TypographyH4, TypographyP } from '@/ui/typography'
 import {
 	Form,
 	FormControl,
@@ -21,45 +21,46 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
-} from '@/ui/form';
-import Alert from '@/ui/alert';
-import { CreateLinkSchema, type CreateLinkInput } from '@/types';
-import { cn } from '@/utils';
-import { MESSAGES } from '@/utils/messages';
+} from '@/ui/form'
+import Alert from '@/ui/alert'
+import { CreateLinkSchema, type CreateLinkInput } from '@/types'
+import { cn } from '@/utils'
+import { MESSAGES } from '@/utils/messages'
 
 export default function Home() {
-	const [loading, setLoading] = useState<boolean>(false);
-	const [message, setMessage] = useState<string>('');
-	const [isError, setError] = useState<boolean>(false);
-	const [isRandomized, setIsRandomized] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(false)
+	const [message, setMessage] = useState<string>('')
+	const [isError, setError] = useState<boolean>(false)
+	const [isRandomized, setIsRandomized] = useState<boolean>(false)
 
-	const { isAuthenticated, login } = useAuthStore((state) => state);
+	const { isAuthenticated, login } = useAuthStore((state) => state)
+	const confettiRef = useRef<JSConfetti | null>(null)
 
-    const { copy } = useCopyToClipboard();
+	const { copy } = useCopyToClipboard()
 
 	const form = useForm<CreateLinkInput>({
 		resolver: zodResolver(CreateLinkSchema),
 		defaultValues: { url: '', slug: '', randomized: false },
-	});
+	})
 
 	/** Authentication handler */
 	const handleAuth = useCallback(async () => {
 		try {
-			const { error } = await authenticate();
+			const { error } = await authenticate()
 			if (error) {
-				toast.error(MESSAGES.ERROR);
-				return;
+				toast.error(MESSAGES.ERROR)
+				return
 			}
-			login();
+			login()
 		} catch {
-			toast.error(MESSAGES.ERROR);
+			toast.error(MESSAGES.ERROR)
 		}
-	}, [login]);
+	}, [login])
 
 	/** Effect to check if the user is authenticated */
 	useEffect(() => {
-		if (!isAuthenticated) handleAuth();
-	}, [isAuthenticated, handleAuth]);
+		if (!isAuthenticated) handleAuth()
+	}, [isAuthenticated, handleAuth])
 
 	/**
 	 * onSubmit form handler
@@ -68,52 +69,54 @@ export default function Home() {
 	const onSubmit = async (values: CreateLinkInput) => {
 		/** Check if the slug and the url are the same */
 		if (values.slug === values.url) {
-			setLoading(false);
-			setError(true);
-			setMessage(MESSAGES.SAME_SLUG_URL);
-			return;
+			setError(true)
+			setMessage(MESSAGES.SAME_SLUG_URL)
+			return
 		}
 		try {
 			setLoading(true)
-			const { error, message, slug } = await createLink(values);
+			const { error, message, slug } = await createLink(values)
 			if (error) {
 				toast.error(
 					message
 						? Object.keys(MESSAGES).includes(message)
 							? MESSAGES[message as keyof typeof MESSAGES]
 							: MESSAGES.ERROR
-						: MESSAGES.ERROR
-				);
-				return;
+						: MESSAGES.ERROR,
+				)
+				return
 			}
 
-			 toast.success(MESSAGES.LINK_CREATED, {
+			toast.success(MESSAGES.LINK_CREATED, {
 				description: `${process.env.NEXT_PUBLIC_APP_URL}/${slug}`,
 				duration: 10000,
 				action: {
 					label: 'Copy',
-					onClick: () => {
-                        copy(`${process.env.NEXT_PUBLIC_APP_URL}/${slug}`)
-						toast.success('Copied to clipboard!');
-					}
-				}
+					onClick: async () => {
+						const success = await copy(
+							`${process.env.NEXT_PUBLIC_APP_URL}/${slug}`,
+						)
+						if (success) toast.success('Copied to clipboard!')
+						else toast.error('Failed to copy to clipboard.')
+					},
+				},
 			})
-			form.reset();
-			if (values.randomized) form.setValue('randomized', isRandomized)
+			form.reset()
+			form.setValue('randomized', isRandomized)
 			await generateConfetti()
 		} catch {
-			toast.error(MESSAGES.ERROR);
+			toast.error(MESSAGES.ERROR)
 		} finally {
-			setError(false);
-			setMessage('');
-			setLoading(false);
+			setError(false)
+			setMessage('')
+			setLoading(false)
 		}
-	};
+	}
 
 	/** Generate confetti animation */
 	const generateConfetti = async () => {
-		const jsConfetti = new JSConfetti();
-		await jsConfetti.addConfetti({
+		if (!confettiRef.current) confettiRef.current = new JSConfetti()
+		await confettiRef.current.addConfetti({
 			confettiColors: [
 				'#a6bbb9',
 				'#789B84',
@@ -124,25 +127,25 @@ export default function Home() {
 			],
 			confettiRadius: 3,
 			confettiNumber: 50,
-		});
-	};
+		})
+	}
 
 	/**
 	 * Randomize slug handler
 	 * @param e
 	 */
 	const handleRandomize = (e: React.MouseEvent<HTMLButtonElement>) => {
-		e.preventDefault();
-		form.setValue('randomized', !isRandomized);
-		form.setValue('slug', '');
-		setIsRandomized(!isRandomized);
-	};
+		e.preventDefault()
+		form.setValue('randomized', !isRandomized)
+		form.setValue('slug', '')
+		setIsRandomized(!isRandomized)
+	}
 
 	return (
 		<main
 			className={cn(
 				'bg-forest-500 bg-[linear-gradient(to_right,#0000000a_1px,transparent_1px),linear-gradient(to_bottom,#0000000a_1px,transparent_1px)] bg-[size:14px_24px] dark:bg-forest-500',
-				'h-[calc(100vh-5rem)] min-h-[730px] flex flex-col justify-between items-center'
+				'h-[calc(100vh-5rem)] min-h-[730px] flex flex-col justify-between items-center',
 			)}>
 			<section className='flex flex-col items-center px-6 text-center'>
 				<TypographyH3 className='flex font-mono text-white max-w-[75ch] duration-500 animate-in fade-in-5 slide-in-from-bottom-2'>
@@ -203,7 +206,7 @@ export default function Home() {
 																placeholder='Link'
 																className={cn(
 																	'w-1/2 transition-opacity duration-500 rounded-br-none rounded-tr-none',
-																	`${isRandomized ? 'opacity-0' : 'opacity-100'}`
+																	`${isRandomized ? 'opacity-0' : 'opacity-100'}`,
 																)}
 																disabled={loading}
 															/>
@@ -214,13 +217,13 @@ export default function Home() {
 																variant='outline'
 																className={cn(
 																	'w-1/2 absolute right-0 rounded-none rounded-br-md rounded-tr-md duration-500 transition-all',
-																	`${isRandomized ? 'w-full rounded-md bg-forest-100 hover:bg-forest-600/50 dark:bg-forest-700 hover:dark:bg-forest-700/50  text-white' : 'hover:bg-forest-100/50 hover:dark:bg-forest-700/50 '}`
+																	`${isRandomized ? 'w-full rounded-md bg-forest-100 hover:bg-forest-600/50 dark:bg-forest-700 hover:dark:bg-forest-700/50  text-white' : 'hover:bg-forest-100/50 hover:dark:bg-forest-700/50 '}`,
 																)}>
 																<ShuffleIcon
 																	size={14}
 																	className={cn(
 																		`transition-opacity duration-500`,
-																		`${isRandomized ? 'opacity-100' : 'opacity-0'}`
+																		`${isRandomized ? 'opacity-100' : 'opacity-0'}`,
 																	)}
 																/>
 																<span className='font-mono text-xs sm:text-sm md:text-base pr-[14px]'>
@@ -260,5 +263,5 @@ export default function Home() {
 			</section>
 			<Footer className='sm:w-1/2 mt-4 pt-4 pb-3' />
 		</main>
-	);
+	)
 }

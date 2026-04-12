@@ -1,10 +1,9 @@
-import { cn } from '@/utils';
-import React from 'react';
-import ExternalLink from '@/ui/external-link';
-import BetaWarning from '../beta-warning';
+import { cn } from '@/utils'
+import ExternalLink from '@/ui/external-link'
+import BetaWarning from '../beta-warning'
 
 interface FooterProps {
-	className?: string;
+	className?: string
 }
 
 const Footer = (props: FooterProps) => {
@@ -14,7 +13,7 @@ const Footer = (props: FooterProps) => {
 				'px-5 text-sm text-neutral-600 animate-in fade-in-25 dark:text-neutral-400',
 				'bg-white/60 backdrop-blur-md dark:bg-neutral-900/60',
 				'rounded-t-md',
-				props.className
+				props.className,
 			)}>
 			<BetaWarning />
 			<div className={cn('container flex items-center justify-between mt-2')}>
@@ -30,7 +29,7 @@ const Footer = (props: FooterProps) => {
 				</div>
 			</div>
 		</footer>
-	);
-};
+	)
+}
 
-export default Footer;
+export default Footer
