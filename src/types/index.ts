@@ -1,12 +1,13 @@
-import z from 'zod';
+import { z } from 'zod'
 
 export const LinkSchema = z.object({
-	id: z.number(),
+	_id: z.string(),
 	url: z.string(),
 	slug: z.string(),
 	visits: z.number().optional(),
 	created_at: z.string(),
-});
+	session: z.string().optional(),
+})
 
 export const CreateLinkSchema = z
 	.object({
@@ -39,7 +40,7 @@ export const CreateLinkSchema = z
 	.refine(({ randomized, slug }) => randomized || slug, {
 		message: 'Link or Randomize is required.',
 		path: ['slug'],
-	});
+	})
 
-export type LinkSchema = z.TypeOf<typeof LinkSchema>;
-export type CreateLinkInput = z.TypeOf<typeof CreateLinkSchema>;
+export type LinkSchema = z.TypeOf<typeof LinkSchema>
+export type CreateLinkInput = z.TypeOf<typeof CreateLinkSchema>
