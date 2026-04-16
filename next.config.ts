@@ -1,5 +1,7 @@
 import type { NextConfig } from 'next'
 
+import packageJson from './package.json'
+
 const requiredEnvVars = [
 	'NEXT_PUBLIC_APP_URL',
 	'NEXT_PUBLIC_API_URL',
@@ -37,6 +39,7 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
 	pageExtensions: ['ts', 'tsx'],
+	env: { NEXT_PUBLIC_APP_VERSION: packageJson.version },
 	experimental: {
 		optimizePackageImports: ['lucide-react'],
 	},
