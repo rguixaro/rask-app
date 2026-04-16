@@ -1,6 +1,6 @@
 {
 	"name": "rask-app",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"private": true,
 	"scripts": {
 		"dev": "next dev",
@@ -41,10 +41,15 @@
 		"@typescript-eslint/parser": "^8.44.1",
 		"autoprefixer": "^10.4.21",
 		"eslint": "^9.36.0",
-		"eslint-config-next": "^16.2.3",
+		"eslint-config-next": "^16.2.4",
 		"postcss": "^8.5.6",
 		"prettier": "3.6.2",
 		"prettier-plugin-tailwindcss": "0.6.14",
 		"typescript": "^5"
+	},
+	"pnpm": {
+		"overrides": {
+			"follow-redirects": ">=1.16.0"
+		}
 	}
 }
