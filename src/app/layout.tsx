@@ -58,6 +58,12 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang='en' suppressHydrationWarning>
+			<head>
+				<meta
+					name='version'
+					content={process.env.NEXT_PUBLIC_APP_VERSION}
+				/>
+			</head>
 			<body
 				className={cn(
 					`font-sans ${interVariable.variable} ${geistMonoVariable.variable} ${atkinsonBold.variable} ${atkinsonRegular.variable} antialiased`,
